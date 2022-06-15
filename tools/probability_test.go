@@ -18,55 +18,22 @@ package tools
 
 import "testing"
 
-func TestAssert(t *testing.T) {
+func TestCalculateIndexByWeight(t *testing.T) {
 	type args struct {
-		condition bool
-		strList   []string
+		weightList []int32
 	}
 	tests := []struct {
 		name string
 		args args
+		want int32
 	}{
 		// TODO: Add test cases.
-		//{
-		//	name: "字符串数组为空时",
-		//	args: args{
-		//		condition: false,
-		//		strList:   nil,
-		//	},
-		//},
-		//{
-		//	name: "字符串数组长度为1",
-		//	args: args{
-		//		condition: false,
-		//		strList:   []string{"hello"},
-		//	},
-		//},
-		//{
-		//	name: "字符串数组长度为2",
-		//	args: args{
-		//		condition: false,
-		//		strList:   []string{"hello", "yytools"},
-		//	},
-		//},
-		{
-			name: "条件为真时",
-			args: args{
-				condition: true,
-				strList:   []string{"hello", "yytools"},
-			},
-		},
-		{
-			name: "条件为真时 strList为空",
-			args: args{
-				condition: true,
-				strList:   nil,
-			},
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Assert(tt.args.condition, tt.args.strList...)
+			if got := CalculateIndexByWeight(tt.args.weightList); got != tt.want {
+				t.Errorf("CalculateIndexByWeight() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
