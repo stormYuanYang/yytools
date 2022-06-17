@@ -117,6 +117,11 @@ func calcIndexWithWeightByBinarySearch(tmpList []int32) int32 {
 }
 
 // 在区间中进行二分查找（区别于普通的二分查找）
+// (l[0], l[1]]
+// (l[1], l[2]]
+// (l[2], l[3]]
+// ...
+// (l[n-1], l[n]]
 func binarySearchInRange(tmpList []int32, n int32) int32 {
 	length := len(tmpList)
 	if length == 0 {
