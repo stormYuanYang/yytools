@@ -1,4 +1,5 @@
-// Package tools.
+// Package skiplist.
+
 // 版权所有(Copyright)[yangyuan]
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,60 +14,52 @@
 // limitations under the License.
 
 // 作者:  yangyuan
-// 创建日期:2022/6/15
-package tools
+// 创建日期:2023/6/1
+package skiplist
 
 import "testing"
 
-func TestAssert(t *testing.T) {
+func Test_randomLevel(t *testing.T) {
 	type args struct {
-		condition bool
-		strList   []string
+		maxLevel           int
+		levelUpProbability float64
 	}
 	tests := []struct {
 		name string
 		args args
+		want int
 	}{
 		// TODO: Add test cases.
-		//{
-		//	name: "字符串数组为空时",
-		//	args: args{
-		//		condition: false,
-		//		strList:   nil,
-		//	},
-		//},
-		//{
-		//	name: "字符串数组长度为1",
-		//	args: args{
-		//		condition: false,
-		//		strList:   []string{"hello"},
-		//	},
-		//},
-		//{
-		//	name: "字符串数组长度为2",
-		//	args: args{
-		//		condition: false,
-		//		strList:   []string{"hello", "yytools"},
-		//	},
-		//},
 		{
-			name: "条件为真时",
+			name: "测试1",
 			args: args{
-				condition: true,
-				strList:   []string{"hello", "yytools"},
+				maxLevel:           MAX_NODE_LEVEL,
+				levelUpProbability: DEFAULT_LEVELUP_PROBABILITY,
 			},
+			want: 1,
 		},
+		//{
+		//	name: "测试2",
+		//	args: args{
+		//		maxLevel:           MAX_NODE_LEVEL + 1,
+		//		levelUpProbability: DEFAULT_LEVELUP_PROBABILITY,
+		//	},
+		//	want: 1,
+		//},
 		{
-			name: "条件为真时 strList为空",
+			name: "测试3",
 			args: args{
-				condition: true,
-				strList:   nil,
+				maxLevel:           MAX_NODE_LEVEL,
+				levelUpProbability: 1.1,
 			},
+			want: 1,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Assert(tt.args.condition, tt.args.strList...)
+			if got := randomLevel(tt.args.maxLevel, tt.args.levelUpProbability); got != tt.want {
+				t.Errorf("randomLevel() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }

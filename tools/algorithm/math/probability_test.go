@@ -1,5 +1,4 @@
 // Package tools.
-
 // 版权所有(Copyright)[yangyuan]
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,28 +14,28 @@
 
 // 作者:  yangyuan
 // 创建日期:2022/6/15
-package tools
+package math
 
-import "strings"
+import (
+	"testing"
+)
 
-// 断言
-// 当断言失败时，调用panic
-func Assert(condition bool, strList ...string) {
-	if !condition {
-		switch len(strList) {
-		case 0:
-			panic("asertion failed.")
-			return
-		case 1:
-			// 需要打印的字符串数组长度为1，直接打印
-			panic(strList[0])
-			return
-		default:
-			// 当有多个字符串时，使用strings.Builder组合字符串(join内部就是使用的strings.Builder)
-			// 多个字符串之间用" "分隔
-			resultStr := strings.Join(strList, " ")
-			panic(resultStr)
-			return
-		}
+func TestCalculateIndexByWeight(t *testing.T) {
+	type args struct {
+		weightList []int32
+	}
+	tests := []struct {
+		name string
+		args args
+		want int32
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := CalculateIndexByWeight(tt.args.weightList); got != tt.want {
+				t.Errorf("CalculateIndexByWeight() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

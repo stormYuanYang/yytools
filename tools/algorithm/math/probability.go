@@ -15,10 +15,11 @@
 
 // 作者:  yangyuan
 // 创建日期:2022/6/15
-package tools
+package math
 
 import (
 	"strconv"
+	"yytools/tools/assert"
 )
 
 /**
@@ -31,10 +32,10 @@ import (
 // 如果要反复使用同一个权重数组计算元素概率，则该函数的效率就会稍低
 // 此时，使用CalculateIndexListByWeight()更佳
 func CalculateIndexByWeight(weightList []int32) int32 {
-	Assert(len(weightList) > 0, "权重数组长度要大于0")
+	assert.Assert(len(weightList) > 0, "权重数组长度要大于0")
 	var totalWeight int32 = 0
 	for _, weight := range weightList {
-		Assert(weight >= 0, "元素的权重不能小于0", strconv.Itoa(int(weight)))
+		assert.Assert(weight >= 0, "元素的权重不能小于0", strconv.Itoa(int(weight)))
 		// 计算总权重
 		// TODO 这里累加实际上可能会溢出int32的，暂不考虑溢出时的情况
 		totalWeight += weight
@@ -52,12 +53,12 @@ func CalculateIndexByWeight(weightList []int32) int32 {
 
 // 根据权重数组，得到指定数量的元素下标
 func CalculateIndexListByWeight(weightList []int32, num int32) []int32 {
-	Assert(len(weightList) > 0, "权重数组长度要大于0")
-	Assert(num > 0, "需要返回的下标数量大于0.num:", strconv.Itoa(int(num)))
+	assert.Assert(len(weightList) > 0, "权重数组长度要大于0")
+	assert.Assert(num > 0, "需要返回的下标数量大于0.num:", strconv.Itoa(int(num)))
 	var totalWeight int32 = 0
 	tmpList := make([]int32, len(weightList)+1)
 	for i, weight := range weightList {
-		Assert(weight >= 0, "元素的权重不能小于0", strconv.Itoa(int(weight)))
+		assert.Assert(weight >= 0, "元素的权重不能小于0", strconv.Itoa(int(weight)))
 		// 计算总权重
 		// TODO 这里累加实际上可能会溢出int32的，暂不考虑溢出时的情况
 		totalWeight += weight
@@ -83,7 +84,7 @@ func CalculateIndexListByWeight(weightList []int32, num int32) []int32 {
 }
 
 func calcIndexWithWeight(weightList []int32, totalWeight int32) int32 {
-	Assert(totalWeight > 0, "总权重需要大于0：", strconv.Itoa(int(totalWeight)))
+	assert.Assert(totalWeight > 0, "总权重需要大于0：", strconv.Itoa(int(totalWeight)))
 	// 先根据总权重计算一个随机值，范围在[1,totalWeight]
 	randNum := RandInt32(1, totalWeight)
 	for i, weight := range weightList {
@@ -98,20 +99,20 @@ func calcIndexWithWeight(weightList []int32, totalWeight int32) int32 {
 		}
 	}
 	// 直接断言 逻辑不应该执行到这里
-	Assert(false, "未命中任何区间,randNum:", strconv.Itoa(int(randNum)),
+	assert.Assert(false, "未命中任何区间,randNum:", strconv.Itoa(int(randNum)),
 		"totalWeight:", strconv.Itoa(int(totalWeight)))
 	// 为满足golang语法这里返回一个数字 但逻辑不能走这里返回
 	return -1
 }
 
 func calcIndexWithWeightByBinarySearch(tmpList []int32) int32 {
-	Assert(len(tmpList) > 0, "数组长度要大于0")
+	assert.Assert(len(tmpList) > 0, "数组长度要大于0")
 	totalWeight := tmpList[len(tmpList)-1]
-	Assert(totalWeight > 0, "总权重需要大于0：", strconv.Itoa(int(totalWeight)))
+	assert.Assert(totalWeight > 0, "总权重需要大于0：", strconv.Itoa(int(totalWeight)))
 	// 先根据总权重计算一个随机值，范围在[1,totalWeight]
 	randNum := RandInt32(1, totalWeight)
 	index := binarySearchInRange(tmpList, randNum)
-	Assert(index != -1, "未命中任何区间,randNum:", strconv.Itoa(int(randNum)),
+	assert.Assert(index != -1, "未命中任何区间,randNum:", strconv.Itoa(int(randNum)),
 		"totalWeight:", strconv.Itoa(int(totalWeight)))
 	return index
 }

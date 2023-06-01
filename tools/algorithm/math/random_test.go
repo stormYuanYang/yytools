@@ -14,7 +14,7 @@
 
 // 作者:  yangyuan
 // 创建日期:2022/6/15
-package tools
+package math
 
 import (
 	"math"

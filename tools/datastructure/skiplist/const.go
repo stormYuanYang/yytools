@@ -1,4 +1,5 @@
-// Package tools.
+// Package skiplist.
+
 // 版权所有(Copyright)[yangyuan]
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,27 +14,10 @@
 // limitations under the License.
 
 // 作者:  yangyuan
-// 创建日期:2022/6/15
-package tools
+// 创建日期:2023/6/1
+package skiplist
 
-import "testing"
-
-func TestCalculateIndexByWeight(t *testing.T) {
-	type args struct {
-		weightList []int32
-	}
-	tests := []struct {
-		name string
-		args args
-		want int32
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := CalculateIndexByWeight(tt.args.weightList); got != tt.want {
-				t.Errorf("CalculateIndexByWeight() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+const (
+	MAX_NODE_LEVEL              = 32  // 跳跃表节点的最高高度
+	DEFAULT_LEVELUP_PROBABILITY = 0.5 // 提升节点高度的概率
+)
