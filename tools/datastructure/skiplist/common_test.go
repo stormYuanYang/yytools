@@ -22,7 +22,7 @@ import "testing"
 func Test_randomLevel(t *testing.T) {
 	type args struct {
 		maxLevel           int
-		levelUpProbability float64
+		levelUpProbability float32
 	}
 	tests := []struct {
 		name string

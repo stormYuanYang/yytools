@@ -22,25 +22,24 @@ import (
 	"yytools/tools/assert"
 )
 
+func random() float32 {
+	return rand.Float32()
+}
+
 // 随机计算跳跃表中某个结点的高度(等级)
 // 高度范围在闭区间[1, maxLevel]内
-func randomLevel(maxLevel int, levelUpProbability float64) int {
+func randomLevel(maxLevel int, levelUpProbability float32) int {
 	assert.Assert(maxLevel <= MAX_NODE_LEVEL,
 		"超过设定的最大节点高度", "指定高度:", maxLevel, "限定高度:", MAX_NODE_LEVEL)
 	assert.Assert(levelUpProbability >= 0 && levelUpProbability < 1,
 		"提升节点高度概率不正确:", levelUpProbability, "正常范围:[0.0,1)")
 	level := 1
-	for {
-		// 满足两个条件就可以提升等级:
-		// 1.等级小于等于指定最大等级 且
-		// 2.满足指定概率
-		// 否则退出循环
-		canLevelUp := (level <= maxLevel && rand.Float64() < levelUpProbability)
-		if canLevelUp {
-			level++
-		} else {
-			break
-		}
+	// 满足两个条件就可以提升等级:
+	// 1.等级小于等于指定最大等级 且
+	// 2.满足指定概率
+	// 否则退出循环
+	for level <= maxLevel && random() < levelUpProbability {
+		level++
 	}
 	return level
 }
