@@ -22,8 +22,8 @@ import (
 	"yytools/tools/assert"
 )
 
-func random() float32 {
-	return rand.Float32()
+func random() int32 {
+	return rand.Int31()
 }
 
 // 随机计算跳跃表中某个结点的高度(等级)
@@ -33,12 +33,16 @@ func randomLevel(maxLevel int, levelUpProbability float32) int {
 		"超过设定的最大节点高度", "指定高度:", maxLevel, "限定高度:", MAX_NODE_LEVEL)
 	assert.Assert(levelUpProbability >= 0 && levelUpProbability < 1,
 		"提升节点高度概率不正确:", levelUpProbability, "正常范围:[0.0,1)")
+	
 	level := 1
+	// 提升等级的概率阈值(将小数形式的概率转换成整数形式的概率)
+	// 而且，得到的阈值一定是在[0,RAND_MAX)范围内的
+	threshold := int32(levelUpProbability * RAND_MAX)
 	// 满足两个条件就可以提升等级:
 	// 1.等级小于等于指定最大等级 且
 	// 2.满足指定概率
 	// 否则退出循环
-	for level <= maxLevel && random() < levelUpProbability {
+	for random() < threshold && level <= maxLevel {
 		level++
 	}
 	return level

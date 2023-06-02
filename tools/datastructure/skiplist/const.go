@@ -17,7 +17,10 @@
 // 创建日期:2023/6/1
 package skiplist
 
+import "math"
+
 const (
-	MAX_NODE_LEVEL              = 32  // 跳跃表节点的最高高度
-	DEFAULT_LEVELUP_PROBABILITY = 0.5 // 提升节点高度的概率
+	MAX_NODE_LEVEL              = 32            // 跳跃表节点的最高高度
+	DEFAULT_LEVELUP_PROBABILITY = 0.25          // 提升节点高度的概率
+	RAND_MAX                    = math.MaxInt32 // int32的最大值 (0x7fffffff)
 )
