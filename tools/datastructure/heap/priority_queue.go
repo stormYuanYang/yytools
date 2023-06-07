@@ -106,6 +106,7 @@ func (this *PriorityQueue) PopItem() *PriorityItem {
 	return heap.Pop(this).(*PriorityItem)
 }
 
+// 更新元素的优先级;重新调节堆内元素的顺序
 func (this *PriorityQueue) UpdatePriority(item *PriorityItem, newPriority int) {
 	assert.Assert(item != nil, "不能传入空元素")
 	assert.Assert(item.Index >= 0 && item.Index < this.Len(),
