@@ -18,8 +18,6 @@
 package math
 
 import (
-	"fmt"
-	"strconv"
 	"yytools/tools/assert"
 )
 
@@ -33,8 +31,8 @@ import (
  空间复杂度: O(c)
 */
 func Gcd(x, y int) int {
-	assert.Assert(x >= 0, fmt.Sprintf("x must greater than or equal 0, x:%d", strconv.Itoa(x)))
-	assert.Assert(y >= 0, fmt.Sprintf("y must greater than or equal 0, y:%d", strconv.Itoa(y)))
+	assert.Assert(x >= 0, "x must greater than or equal 0, x:", x)
+	assert.Assert(y >= 0, "y must greater than or equal 0, y:", y)
 	if y == 0 {
 		return x
 	}
