@@ -13,6 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// 用最大堆实现的优先级队列的
+// 优先级数值越高的元素，优先级越高
+
 // 作者:  yangyuan
 // 创建日期:2023/6/7
 package heap
@@ -26,7 +29,7 @@ import (
 // PriorityItem 优先级队列元素
 type PriorityItem struct {
 	Data     interface{} // 携带的数据
-	Priority int         // 优先级(数值越大的越靠前)
+	Priority int         // 优先级(数值越大的越靠前,即优先级越高)
 	Index    int         // 在堆中的下标(需要在实现heap.Interface的方法中更新)
 }
 
