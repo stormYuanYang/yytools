@@ -23,7 +23,7 @@ import (
 func TestAssert(t *testing.T) {
 	type args struct {
 		condition bool
-		strList   []string
+		strList   []interface{}
 	}
 	tests := []struct {
 		name string
@@ -55,7 +55,7 @@ func TestAssert(t *testing.T) {
 			name: "条件为真时",
 			args: args{
 				condition: true,
-				strList:   []string{"hello", "yytools"},
+				strList:   []interface{}{"hello", "yytools"},
 			},
 		},
 		{

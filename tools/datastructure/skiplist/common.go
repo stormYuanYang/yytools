@@ -19,7 +19,7 @@ package skiplist
 
 import (
 	"math/rand"
-	"yytools/tools/assert"
+	"yytools/tools/common/assert"
 )
 
 func random() float32 {

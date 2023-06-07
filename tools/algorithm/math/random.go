@@ -21,7 +21,7 @@ import (
 	"math"
 	"math/rand"
 	"strconv"
-	"yytools/tools/assert"
+	"yytools/tools/common/assert"
 )
 
 // 返回闭区间[low,high]中的某一个数
