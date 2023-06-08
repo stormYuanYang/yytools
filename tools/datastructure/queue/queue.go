@@ -104,28 +104,17 @@ func (this *Queue) nextTail() int {
 
 func (this *Queue) copyTo(newItems []interface{}) {
 	// 依次将原数组中的元素，移动到新数组
-	length := this.Len()
 	if this.Tail >= this.Head {
-		// 没有环绕直接依次移动即可
-		for i := 0; i < length; i++ {
-			newItems[i] = this.Items[this.Head+i]
-			//this.Items[this.Head+i] = nil // 为了安全（避免内存泄露）
-		}
+		// 没有环绕直接拷贝即可
+		copy(newItems, this.Items[this.Head:this.Tail])
 	} else {
-		// 有环绕
-		i := 0
-		// 则先复制右边的元素
-		for j := this.Head; j < this.Capacity(); j++ {
-			newItems[i] = this.Items[j]
-			//this.Items[j] = nil // 为了安全（避免内存泄露）
-			i++
-		}
-		// 再复制左边的元素
-		for j := 0; j < this.Tail; j++ {
-			newItems[i] = this.Items[j]
-			//this.Items[j] = nil // 为了安全（避免内存泄露）
-			i++
-		}
+		// 有环绕时
+		// 则先复制右边的元素(队列前半段元素)
+		// 从原数组头一直到数据最后一个元素
+		count := copy(newItems, this.Items[this.Head:])
+		// 再复制左边的元素(队列后半段元素)
+		// 从原数组的0下标一直到Tail前
+		copy(newItems[count:], this.Items[:this.Tail])
 	}
 }
 
