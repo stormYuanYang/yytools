@@ -71,6 +71,7 @@ func (this *Stack) Pop() interface{} {
 	length := this.Len()
 	assert.Assert(length > 0, "栈空了，无法出栈!")
 	item := this.Items[length-1]
+	this.Items[length-1] = nil // 为了安全（避免内存泄露）
 	// TODO 切面赋值的效率如何？比起手动决定何时缩容呢？
 	this.Items = this.Items[:length-1]
 	return item
