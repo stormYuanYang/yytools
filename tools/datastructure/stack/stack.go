@@ -80,5 +80,5 @@ func (this *Stack) Pop() interface{} {
 func (this *Stack) Top() (item interface{}) {
 	length := this.Len()
 	assert.Assert(length > 0, "栈空了，无法出栈!")
-	return this.Items[this.Len()-1]
+	return this.Items[length-1]
 }

@@ -80,11 +80,11 @@ func (this *PriorityQueue) Push(x interface{}) {
 
 // 根据堆的原理，首位的元素会被交换到最后一位
 func (this *PriorityQueue) Pop() interface{} {
-	length := len(this.Items) // 获取堆长度
-
+	length := this.Len() // 获取堆长度
+	
 	item := this.Items[length-1] // 取最后一个元素
 	item.Index = -1              // 为了安全(不再引用数组内下标)
-
+	
 	this.Items[length-1] = nil         // 避免内存泄露
 	this.Items = this.Items[:length-1] // 堆的长度减一
 	return item
