@@ -66,14 +66,32 @@ func (this *Stack) Push(item interface{}) {
 	this.Items = append(this.Items, item)
 }
 
+func (this *Stack) tryShrink() {
+	if len(this.Items) < cap(this.Items)/4 {
+		newCap := cap(this.Items) / 2
+		if newCap < DEFAULT_STACK_SIZE {
+			newCap = DEFAULT_STACK_SIZE
+		}
+		newItems := make([]interface{}, newCap)
+		n := copy(newItems, this.Items)
+		assert.Assert(n == len(this.Items), "缩容不能改变元素数量!", len(this.Items), n)
+		this.Items = newItems
+	}
+}
+
 // 需要调用者保证(可以调用Empty()判断)，栈里还有元素可以出栈
 func (this *Stack) Pop() interface{} {
 	length := this.Len()
 	assert.Assert(length > 0, "栈空了，无法出栈!")
 	item := this.Items[length-1]
 	this.Items[length-1] = nil // 为了安全（避免内存泄露）
-	// TODO 切面赋值的效率如何？比起手动决定何时缩容呢？
+	// 切面赋值的效率如何？手动决定何时缩容呢？
+	// 效率很高相当于直接操作数组下标 但是其切片的容量是不会减小的
+	// 也就是说当pop足够多元素后,切片所对应的cap是不会减小的，就会浪费很多空间
+	// 这时就需要手动实现缩容了
 	this.Items = this.Items[:length-1]
+	// 尝试缩容
+	this.tryShrink()
 	return item
 }
 
