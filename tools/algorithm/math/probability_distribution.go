@@ -143,11 +143,11 @@ func binarySearchInRange(tmpList []int32, n int32) int32 {
 }
 
 // Vose's Alias Method(Vose的别名方法)
-// 当前获得概率分布最高效的实现方式
+// 十分高效而优雅的实现方式
 // 初始化阶段:
 // 时间复杂度O(n),空间复杂度O(n)
 // 生成阶段:
-// 时间复杂度O(1)
+// 时间复杂度O(1) [初始化阶段决定了:生成器本身就具有O(n)的空间复杂度]
 // 参考: https://www.keithschwarz.com/darts-dice-coins/
 type VoseAliasMethod struct {
 	Prob  []float // 概率数组
