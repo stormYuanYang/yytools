@@ -142,6 +142,10 @@ func binarySearchInRange(tmpList []int32, n int32) int32 {
 	return -1
 }
 
+type InterfaceProbDistr interface {
+	Generation() int
+}
+
 // Vose's Alias Method(Vose的别名方法)
 // 十分高效而优雅的实现方式
 // 初始化阶段:
@@ -154,10 +158,10 @@ type VoseAliasMethod struct {
 	Alias []int   // 别名数组(记录的是下标)
 }
 
-type float float32
+type float float64
 
-func NewVoseAliasMethod(weights []float) *VoseAliasMethod {
-	totalWeight := float(0)
+func NewVoseAliasMethod(weights []int) *VoseAliasMethod {
+	totalWeight := 0
 	for _, w := range weights {
 		totalWeight += w
 	}
@@ -172,7 +176,7 @@ func NewVoseAliasMethod(weights []float) *VoseAliasMethod {
 	// 初始化概率数组(每个原概率值都乘以n,等比例放大;总体的概率分布是不变的)
 	// 概率值等比例放大后，概率平均值为1，概率总和为n
 	for i := 0; i < n; i++ {
-		prob[i] = weights[i] / totalWeight * float(n)
+		prob[i] = float(weights[i]) / float(totalWeight) * float(n)
 		// 设置小概率和大概率
 		if prob[i] < 1 {
 			small.Push(i)
@@ -233,4 +237,14 @@ func (this *VoseAliasMethod) Generation() int {
 		assert.Assert(index >= 0 && index < n, "out of range:", index)
 		return index
 	}
+}
+
+// 精简表查询(Condensed Table Lookup)
+// 这个方法不如Vose's Alias Method方法通用，十分依赖输入的数据分布
+// 但在适用时，其效率和空间利用率比Vose's Alias Method更好
+// 在必要时可以结合两者，实现更高效、节省的算法
+// 初始化阶段:时间复杂度O(n),空间复杂度O(1)
+// 生成阶段：时间复杂度O(1)
+// TODO
+type CondensedTableLookUp struct {
 }
