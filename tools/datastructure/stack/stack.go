@@ -72,7 +72,7 @@ func (this *Stack) tryShrink() {
 		if newCap < DEFAULT_STACK_SIZE {
 			newCap = DEFAULT_STACK_SIZE
 		}
-		newItems := make([]interface{}, 0, newCap)
+		newItems := make([]interface{}, len(this.Items), newCap)
 		n := copy(newItems, this.Items)
 		assert.Assert(n == len(this.Items), "缩容不能改变元素数量!", len(this.Items), n)
 		this.Items = newItems

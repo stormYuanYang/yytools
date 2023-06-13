@@ -227,8 +227,8 @@ func NewVoseAliasMethod(weights []int) *VoseAliasMethod {
 // 效率非常高的：时间复杂度O(1)
 func (this *VoseAliasMethod) Generation() int {
 	n := len(this.Prob)
-	i := RandInt(0, n) // 随机得到一个概率数组的下标
-	p := RandFloat32() // 范围：[0.0,1.0)
+	i := RandInt(0, n-1) // 随机得到一个概率数组的下标
+	p := RandFloat32()   // 范围：[0.0,1.0)
 	// 在[0.0, 1.0)范围内随机得到一个值,用这个值去判断得到该概率还是其别名
 	if float(p) < this.Prob[i] {
 		return i

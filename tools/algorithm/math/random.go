@@ -58,6 +58,7 @@ func RandInt64(low, high int64) int64 {
 	return rand.Int63n(n) + low
 }
 
+// 返回闭区间[low,high]中的某一个数
 func RandInt(low, high int) int {
 	assert.Assert(low >= 0, "invalid low:", low)
 	assert.Assert(high >= 0, "invalid high:", high)
