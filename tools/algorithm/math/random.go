@@ -24,6 +24,10 @@ import (
 	"yytools/tools/common/assert"
 )
 
+func RandSeed(seed int64) {
+	rand.Seed(seed)
+}
+
 // 返回闭区间[low,high]中的某一个数
 func RandInt32(low, high int32) int32 {
 	assert.Assert(low >= 0, "invalid low:", strconv.Itoa(int(low)))
@@ -52,4 +56,27 @@ func RandInt64(low, high int64) int64 {
 	assert.Assert(!(low == 0 && high == math.MaxInt64), "low等于0时，high不能为最大值")
 	n := high - low + 1
 	return rand.Int63n(n) + low
+}
+
+func RandInt(low, high int) int {
+	assert.Assert(low >= 0, "invalid low:", low)
+	assert.Assert(high >= 0, "invalid high:", high)
+	if low == high {
+		return low
+	}
+	if low > high {
+		low, high = high, low
+	}
+	assert.Assert(!(low == 0 && high == math.MaxInt), "low等于0时，high不能为最大值")
+	n := high - low + 1
+	return rand.Intn(n) + low
+	
+}
+
+func RandFloat32() float32 {
+	return rand.Float32()
+}
+
+func RandFloat64() float64 {
+	return rand.Float64()
 }
