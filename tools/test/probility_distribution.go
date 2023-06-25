@@ -35,10 +35,10 @@ func VoseAliasMethodTest() {
 	println()
 
 	N := 1000000
-	gen := math.NewVoseAliasMethod(x)
+	voseAliasMethod := math.NewVoseAliasMethod(x)
 	tmp := make(map[int]int)
 	for i := 0; i < N; i++ {
-		index := gen.Generation()
+		index := voseAliasMethod.Generate()
 		tmp[index]++
 	}
 	println("实际输出概率分布：")

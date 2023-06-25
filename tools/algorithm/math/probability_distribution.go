@@ -143,7 +143,7 @@ func binarySearchInRange(tmpList []int32, n int32) int32 {
 }
 
 type InterfaceProbDistr interface {
-	Generation() int
+	Generate() int
 }
 
 // Vose's Alias Method(Vose的别名方法)
@@ -225,7 +225,7 @@ func NewVoseAliasMethod(weights []int) *VoseAliasMethod {
 
 // 返回概率(权重)数组的某一概率(权重)的下标
 // 效率非常高的：时间复杂度O(1)
-func (this *VoseAliasMethod) Generation() int {
+func (this *VoseAliasMethod) Generate() int {
 	n := len(this.Prob)
 	i := RandInt(0, n-1) // 随机得到一个概率数组的下标
 	p := RandFloat64()   // 范围：[0.0,1.0)
