@@ -19,7 +19,7 @@ package test
 
 import (
 	"fmt"
-	"yytools/tools/algorithm/math"
+	"yytools/base/algorithm/math"
 )
 
 func VoseAliasMethodTest() {

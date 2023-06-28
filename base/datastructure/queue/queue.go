@@ -18,7 +18,7 @@
 package queue
 
 import (
-	"yytools/tools/common/assert"
+	"yytools/base/common/assert"
 )
 
 type InterfaceQueue interface {

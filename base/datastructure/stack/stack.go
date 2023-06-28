@@ -20,7 +20,7 @@
 package stack
 
 import (
-	"yytools/tools/common/assert"
+	"yytools/base/common/assert"
 )
 
 type InterfaceStack interface {

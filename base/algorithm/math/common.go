@@ -18,7 +18,7 @@
 package math
 
 import (
-	"yytools/tools/common/assert"
+	"yytools/base/common/assert"
 )
 
 /*

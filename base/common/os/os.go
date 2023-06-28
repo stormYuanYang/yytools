@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"os"
 	"time"
-	"yytools/tools/common/constant"
+	"yytools/base/common/constant"
 )
 
 // 检测路径是否存在

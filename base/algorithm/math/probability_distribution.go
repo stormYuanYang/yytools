@@ -18,8 +18,8 @@
 package math
 
 import (
-	"yytools/tools/common/assert"
-	"yytools/tools/datastructure/stack"
+	"yytools/base/common/assert"
+	"yytools/base/datastructure/stack"
 )
 
 /**
