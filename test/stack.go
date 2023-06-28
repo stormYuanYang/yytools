@@ -19,10 +19,10 @@ package test
 
 import (
 	"strconv"
-	"yytools/base/algorithm/math"
-	"yytools/base/common/assert"
-	"yytools/base/common/constant"
-	"yytools/base/datastructure/stack"
+	"yytools/algorithm/math"
+	"yytools/common/assert"
+	"yytools/common/constant"
+	"yytools/datastructure/stack"
 )
 
 func IntStackTest0() {

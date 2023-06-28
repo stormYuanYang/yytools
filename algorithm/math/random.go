@@ -21,7 +21,7 @@ import (
 	"math"
 	"math/rand"
 	"strconv"
-	"yytools/base/common/assert"
+	"yytools/common/assert"
 )
 
 func RandSeed(seed int64) {

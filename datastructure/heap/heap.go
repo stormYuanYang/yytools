@@ -19,7 +19,7 @@ package heap
 
 import (
 	"container/heap"
-	"yytools/base/common/assert"
+	"yytools/common/assert"
 )
 
 // Item 堆元素
