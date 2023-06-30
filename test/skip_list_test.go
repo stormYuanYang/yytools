@@ -38,12 +38,12 @@ func NewData() *Data {
 	}
 }
 
-func (this *Data) LessThan(data skiplist.NodeData) bool {
+func (this *Data) LessThan(data skiplist.Value) bool {
 	x := data.(*Data)
 	return this.ID < x.ID
 }
 
-func (this *Data) EqualTo(data skiplist.NodeData) bool {
+func (this *Data) EqualTo(data skiplist.Value) bool {
 	x := data.(*Data)
 	return this.ID == x.ID
 }

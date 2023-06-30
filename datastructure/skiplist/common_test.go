@@ -33,7 +33,7 @@ func Test_randomLevel(t *testing.T) {
 		{
 			name: "测试1",
 			args: args{
-				maxLevel:           MAX_NODE_LEVEL,
+				maxLevel:           SKIPLIST_MAXLEVEL,
 				levelUpProbability: DEFAULT_LEVELUP_PROBABILITY,
 			},
 			want: 1,
@@ -41,7 +41,7 @@ func Test_randomLevel(t *testing.T) {
 		//{
 		//	name: "测试2",
 		//	args: args{
-		//		maxLevel:           MAX_NODE_LEVEL + 1,
+		//		maxLevel:           SKIPLIST_MAXLEVEL + 1,
 		//		levelUpProbability: DEFAULT_LEVELUP_PROBABILITY,
 		//	},
 		//	want: 1,
@@ -49,7 +49,7 @@ func Test_randomLevel(t *testing.T) {
 		{
 			name: "测试3",
 			args: args{
-				maxLevel:           MAX_NODE_LEVEL,
+				maxLevel:           SKIPLIST_MAXLEVEL,
 				levelUpProbability: 1.1,
 			},
 			want: 1,
@@ -57,7 +57,7 @@ func Test_randomLevel(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := randomLevel(tt.args.maxLevel, tt.args.levelUpProbability); got != tt.want {
+			if got := randomLevel(tt.args.levelUpProbability); got != tt.want {
 				t.Errorf("randomLevel() = %v, want %v", got, tt.want)
 			}
 		})
