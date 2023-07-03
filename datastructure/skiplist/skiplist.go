@@ -248,7 +248,14 @@ func (this *SkipList) Insert(score float64, val Value) (*Node, bool) {
 	
 	// 最下面一层实际是个双向链表
 	// 将向后(方向)的链表链接起来
-	newNode.Backward = prevNodes[0]
+	if prevNodes[0] == this.Head {
+		// backward不指向头结点，而是指向nil
+		// 方便统一的nil判断
+		newNode.Backward = nil
+	} else {
+		newNode.Backward = prevNodes[0]
+	}
+	
 	if newNode.Levels[0].Forward != nil {
 		newNode.Levels[0].Forward.Backward = newNode
 	} else {
@@ -469,7 +476,7 @@ func (this *SkipList) UpdateScore(score float64, newScore float64, val Value) (*
 	// 先看能不能复用之前的结点对象
 	// 如果新分数和旧的分数的位置一样不会变化的话就可以复用之前的旧结点
 	// 那么就只需要更新结点的分数即可
-	if (current.Backward == this.Head || current.Backward.Score < newScore) &&
+	if (current.Backward == nil || current.Backward.Score < newScore) &&
 		(current.Levels[0].Forward == nil || current.Levels[0].Forward.Score > newScore) {
 		current.Score = newScore
 		return current, true
