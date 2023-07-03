@@ -38,13 +38,13 @@ type SkipListLevel struct {
 }
 
 type Value interface {
-	LessThan(other Value) bool
-	EqualTo(other Value) bool
+	LessThan(other *Value) bool
+	EqualTo(other *Value) bool
 }
 
 // 不小于也不等于,那么就是大于
-func ValueGreaterThan(one Value, other Value) bool{
-	return !one.LessThan(other)	&& !one.EqualTo(other)
+func ValueGreaterThan(one *Value, other *Value) bool {
+	return !(*one).LessThan(other) && !(*one).EqualTo(other)
 }
 
 
@@ -52,7 +52,7 @@ type Node struct {
 	Levels   []*SkipListLevel // 向前的(每个高度的下一个)结点数组
 	Backward *Node            // 上一个结点(这样最下层就是双向链表，方便向后的遍历)
 	Score    float64          // 分数(跳跃表根据该数值来对节点进行有序排列)
-	Val      Value            // 卫星数据
+	Val      *Value           // 卫星数据
 }
 
 type RangeSpecifiedBase struct {
@@ -70,19 +70,19 @@ type RangeSpecified struct {
 // 比较值时，指定值范围和边界(开闭区间)
 type ValueRangeSpecified struct {
 	RangeSpecifiedBase
-	Min Value
-	Max Value
+	Min *Value
+	Max *Value
 }
 
 /*
 	method of Node
 */
-func CreateNode(level int, score float64, data Value) *Node {
+func CreateNode(level int, score float64, data *Value) *Node {
 	levelArr := make([]*SkipListLevel, level)
-	for i:=0; i<level; i++ {
+	for i := 0; i < level; i++ {
 		levelArr[i] = &SkipListLevel{
 			Forward: nil,
-			Span: 0,
+			Span:    0,
 		}
 	}
 	node := &Node{
@@ -126,7 +126,7 @@ func NewSkipListByParams(nodeLevelUpProb float32) *SkipList {
 // 根据分数和数据查找结点
 // 时间复杂度为O(logn)
 // 空间复杂度为O(1)
-func (this *SkipList) Get(score float64, val Value) (*Node, bool) {
+func (this *SkipList) Get(score float64, val *Value) (*Node, bool) {
 	// 断言(判断传入的分数值)
 	assert.Assert(!math.IsNaN(score), "score is not a number:", score)
 	// 断言(不允许传入nil)
@@ -140,13 +140,13 @@ func (this *SkipList) Get(score float64, val Value) (*Node, bool) {
 		current := prev.Levels[i].Forward
 		for current != nil &&
 			(current.Score < score ||
-				current.Score == score && current.Val.LessThan(val)) {
+				current.Score == score && (*current.Val).LessThan(val)) {
 			// 双指针继续向前移动
 			prev = current
 			current = prev.Levels[i].Forward
 		}
 		if current != nil &&
-			(current.Score == score && current.Val.EqualTo(val)) {
+			(current.Score == score && (*current.Val).EqualTo(val)) {
 			// 找到了
 			return current, true
 		}
@@ -161,7 +161,7 @@ func (this *SkipList) Get(score float64, val Value) (*Node, bool) {
 // 需要由调用者保证不插入重复的结点,如果结点已存在则会插入失败
 // 时间复杂度为O(logn)
 // 空间复杂度为O(1)
-func (this *SkipList) Insert(score float64, val Value) (*Node, bool) {
+func (this *SkipList) Insert(score float64, val *Value) (*Node, bool) {
 	// 断言(判断传入的分数值)
 	assert.Assert(!math.IsNaN(score), "score is not a number:", score)
 	// 断言(不允许传入nil)
@@ -186,7 +186,7 @@ func (this *SkipList) Insert(score float64, val Value) (*Node, bool) {
 		current := prev.Levels[i].Forward
 		for current != nil &&
 			(current.Score < score ||
-				current.Score == score && current.Val.LessThan(val)) {
+				current.Score == score && (*current.Val).LessThan(val)) {
 			// 指针向前行进说明，要插入的结点在当前结点的前方
 			// 那么加上当前结点的跨度
 			rank[i] += prev.Levels[i].Span
@@ -197,7 +197,7 @@ func (this *SkipList) Insert(score float64, val Value) (*Node, bool) {
 			current = prev.Levels[i].Forward
 		}
 		if current != nil &&
-			(current.Score == score && current.Val.EqualTo(val)) {
+			(current.Score == score && (*current.Val).EqualTo(val)) {
 			// 如果逻辑走到这里，意味着将插入重复元素(不允许插入重复元素)
 			// 返回已存在的元素
 			// BTW,如果调用者能够保证不会插入重复的元素，那么这里的判断就是不必要的
@@ -248,7 +248,14 @@ func (this *SkipList) Insert(score float64, val Value) (*Node, bool) {
 	
 	// 最下面一层实际是个双向链表
 	// 将向后(方向)的链表链接起来
-	newNode.Backward = prevNodes[0]
+	if prevNodes[0] == this.Head {
+		// backward不指向头结点，而是指向nil
+		// 方便统一的nil判断
+		newNode.Backward = nil
+	} else {
+		newNode.Backward = prevNodes[0]
+	}
+	
 	if newNode.Levels[0].Forward != nil {
 		newNode.Levels[0].Forward.Backward = newNode
 	} else {
@@ -264,13 +271,13 @@ func (this *SkipList) Insert(score float64, val Value) (*Node, bool) {
 
 // 通过分数和值查找指定结点，并更新前置结点数组
 // 注意和Get方法区分：Get方法找到结点就返回，这个方法还要更新前置结点数组，更消耗一些
-func (this *SkipList) findNode(score float64, val Value, prevNodes *[SKIPLIST_MAXLEVEL]*Node) (*Node, bool) {
+func (this *SkipList) findNode(score float64, val *Value, prevNodes *[SKIPLIST_MAXLEVEL]*Node) (*Node, bool) {
 	prev := this.Head
 	for i := this.Level - 1; i >= 0; i-- {
 		current := prev.Levels[i].Forward
 		for current != nil &&
 			(current.Score < score ||
-				current.Score == score && current.Val.LessThan(val)) {
+				current.Score == score && (*current.Val).LessThan(val)) {
 			prev = current
 			current = prev.Levels[i].Forward
 		}
@@ -281,7 +288,7 @@ func (this *SkipList) findNode(score float64, val Value, prevNodes *[SKIPLIST_MA
 	current := prev.Levels[0].Forward
 	if current != nil &&
 		current.Score == score &&
-		current.Val.EqualTo(val) {
+		(*current.Val).EqualTo(val) {
 		return current, true
 	}
 	// 找不到指定的结点(必须要分数和数据都等，才算是同一个结点)
@@ -329,7 +336,7 @@ func (this *SkipList) deleteNode(current *Node, prevNodes *[SKIPLIST_MAXLEVEL]*N
 // 根据分数和值，删除指定结点
 // 时间复杂度为O(logn)
 // 空间复杂度为O(1)
-func (this *SkipList) Delete(score float64, val Value) (*Node, bool) {
+func (this *SkipList) Delete(score float64, val *Value) (*Node, bool) {
 	// 断言(判断传入的分数值)
 	assert.Assert(!math.IsNaN(score), "score is not a number:", score)
 	// 断言(不允许传入nil)
@@ -385,7 +392,7 @@ func (this *SkipList) DeleteRangeByRank(start int, end int) int{
 }
 
 // 这个方法的实现和Get()几乎一模一样
-func (this *SkipList) GetRank(score float64, val Value) int{
+func (this *SkipList) GetRank(score float64, val *Value) int {
 	// 断言(判断传入的分数值)
 	assert.Assert(!math.IsNaN(score), "score is not a number:", score)
 	// 断言(不允许传入nil)
@@ -400,7 +407,7 @@ func (this *SkipList) GetRank(score float64, val Value) int{
 		current := prev.Levels[i].Forward
 		for current != nil &&
 			(current.Score < score ||
-				current.Score == score && current.Val.LessThan(val)) {
+				current.Score == score && (*current.Val).LessThan(val)) {
 			// 累计跨度
 			rank += prev.Levels[i].Span
 			
@@ -409,7 +416,7 @@ func (this *SkipList) GetRank(score float64, val Value) int{
 			current = prev.Levels[i].Forward
 		}
 		if current != nil &&
-			(current.Score == score && current.Val.EqualTo(val)) {
+			(current.Score == score && (*current.Val).EqualTo(val)) {
 			// 找到了
 			return rank
 		}
@@ -450,7 +457,7 @@ func (this *SkipList) GetNodeByRank(rank int) *Node{
  Score相关操作
  */
 
-func (this *SkipList) UpdateScore(score float64, newScore float64, val Value) (*Node, bool) {
+func (this *SkipList) UpdateScore(score float64, newScore float64, val *Value) (*Node, bool) {
 	// 断言(判断传入的分数值)
 	assert.Assert(!math.IsNaN(score), "score is not a number:", score)
 	assert.Assert(!math.IsNaN(newScore), "newScore is not a number:", newScore)
@@ -469,7 +476,7 @@ func (this *SkipList) UpdateScore(score float64, newScore float64, val Value) (*
 	// 先看能不能复用之前的结点对象
 	// 如果新分数和旧的分数的位置一样不会变化的话就可以复用之前的旧结点
 	// 那么就只需要更新结点的分数即可
-	if (current.Backward == this.Head || current.Backward.Score < newScore) &&
+	if (current.Backward == nil || current.Backward.Score < newScore) &&
 		(current.Levels[0].Forward == nil || current.Levels[0].Forward.Score > newScore) {
 		current.Score = newScore
 		return current, true
@@ -620,27 +627,27 @@ func (this *SkipList) DeleteRangeByScore(r *RangeSpecified) int{
  Value相关操作
  */
 
-func valueGeaterThanMin(val Value, r *ValueRangeSpecified) bool {
+func valueGeaterThanMin(val *Value, r *ValueRangeSpecified) bool {
 	if r.MinExclusive {
 		return ValueGreaterThan(val, r.Max)
 	} else {
 		// 不小于，则认为就是大于等于
-		return !val.LessThan(r.Min)
+		return !(*val).LessThan(r.Min)
 	}
 }
 
-func valueLessThanMax(val Value, r *ValueRangeSpecified) bool{
+func valueLessThanMax(val *Value, r *ValueRangeSpecified) bool {
 	if r.MaxExclusive {
-		return val.LessThan(r.Max)
+		return (*val).LessThan(r.Max)
 	} else {
 		// 小于或者等于
-		return val.LessThan(r.Max) || val.EqualTo(r.Max)
+		return (*val).LessThan(r.Max) || (*val).EqualTo(r.Max)
 	}
 }
 
 func (this *SkipList) isInValueRange(r *ValueRangeSpecified) bool{
 	if ValueGreaterThan(r.Min, r.Max) ||
-		(r.Min.EqualTo(r.Max) && (r.MinExclusive || r.MaxExclusive)) {
+		((*r.Min).EqualTo(r.Max) && (r.MinExclusive || r.MaxExclusive)) {
 		// 指定范围不合法
 		return false
 	}
