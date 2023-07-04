@@ -53,6 +53,14 @@ type NodeData struct {
 	Val   Value   // 卫星数据
 }
 
+func NewNodeData(key interface{}, score float64, val Value) *NodeData {
+	return &NodeData{
+		Key:   key,
+		Score: score,
+		Val:   val,
+	}
+}
+
 func (this *NodeData) LessThan(other *NodeData) bool {
 	return this.Score < other.Score ||
 		this.Score == other.Score && this.Val.LessThan(other.Val)
