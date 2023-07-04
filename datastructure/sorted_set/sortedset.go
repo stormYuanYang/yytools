@@ -20,7 +20,6 @@
 package sorted_set
 
 import (
-	"fmt"
 	"yytools/common/assert"
 )
 
@@ -54,11 +53,11 @@ func (this *SortedSet) Insert(data *NodeData) bool {
 	}
 	
 	_, ok := this.Sl.Insert(data)
-	assert.Assert(ok, "insert must success, data:", fmt.Sprint("%+v", data))
+	assert.Assert(ok, "insert must success, data.Key:", data.Key)
 	if ok {
 		this.Hash[data.Key] = data
 	}
-	this.LengthMustEqual()
+	this.lengthMustEqual()
 	return ok
 }
 
@@ -73,7 +72,7 @@ func (this *SortedSet) Delete(key interface{}) (*NodeData, bool) {
 	if node, ok := this.Sl.Delete(data); ok {
 		// 同步删除哈希表中的元素
 		delete(this.Hash, key)
-		this.LengthMustEqual()
+		this.lengthMustEqual()
 		return node.Data, ok
 	} else {
 		return nil, ok
@@ -84,7 +83,7 @@ func (this *SortedSet) Length() int {
 	return this.Sl.Length
 }
 
-func (this *SortedSet) LengthMustEqual() {
+func (this *SortedSet) lengthMustEqual() {
 	assert.Assert(this.Sl.Length == len(this.Hash),
 		"长度不一致 skiplist length:", this.Sl.Length, " hash length:", this.Hash)
 }
@@ -136,7 +135,7 @@ func (this *SortedSet) DeleteRangeByRank(start int, end int) []*NodeData {
 	for _, one := range deleted {
 		delete(this.Hash, one.Key)
 	}
-	this.LengthMustEqual()
+	this.lengthMustEqual()
 	return deleted
 }
 
@@ -154,7 +153,7 @@ func (this *SortedSet) UpdateScore(key interface{}, newScore float64) (*NodeData
 	if !ok {
 		return nil, ok
 	}
-	this.LengthMustEqual()
+	this.lengthMustEqual()
 	return node.Data, ok
 }
 
@@ -186,6 +185,6 @@ func (this *SortedSet) DeleteRangeByScore(min float64, minEx bool, max float64, 
 	for _, one := range deleted {
 		delete(this.Hash, one.Key)
 	}
-	this.LengthMustEqual()
+	this.lengthMustEqual()
 	return deleted
 }

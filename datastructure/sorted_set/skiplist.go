@@ -383,7 +383,7 @@ func (this *SkipList) GetRank(data *NodeData) int {
 		// 1.指定分数大于当前结点的分数，说明要查找的节点一定在当前结点的前方;
 		// 2.当前节点不能是(哨兵)尾结点
 		current := prev.Levels[i].Forward
-		for current != nil && current.Data.LessThan(data) {
+		for current != nil && (current.Data.LessThan(data) || current.Data.EqualTo(data)) {
 			// 累计跨度
 			rank += prev.Levels[i].Span
 			
@@ -391,7 +391,7 @@ func (this *SkipList) GetRank(data *NodeData) int {
 			prev = current
 			current = prev.Levels[i].Forward
 		}
-		if current != nil && current.Data.EqualTo(data) {
+		if prev != nil && prev.Data.EqualTo(data) {
 			// 找到了
 			return rank
 		}
