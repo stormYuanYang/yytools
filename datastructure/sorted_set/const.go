@@ -1,4 +1,4 @@
-// Package skiplist.
+// Package sorted_set.
 
 // 版权所有(Copyright)[yangyuan]
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
 
 // 作者:  yangyuan
 // 创建日期:2023/6/1
-package skiplist
+package sorted_set
 
 import "math"
 

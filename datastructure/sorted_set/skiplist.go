@@ -1,4 +1,4 @@
-// Package skiplist.
+// Package sorted_set.
 
 // 版权所有(Copyright)[yangyuan]
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@
 
 // 作者:  yangyuan
 // 创建日期:2023/6/2
-package skiplist
+package sorted_set
 
 import (
 	"math"
@@ -43,16 +43,29 @@ type Value interface {
 }
 
 // 不小于也不等于,那么就是大于
-func ValueGreaterThan(one Value, other Value) bool{
-	return !one.LessThan(other)	&& !one.EqualTo(other)
+func ValueGreaterThan(one Value, other Value) bool {
+	return !one.LessThan(other) && !one.EqualTo(other)
 }
 
+type NodeData struct {
+	Key   interface{}
+	Score float64 // 分数(跳跃表根据该数值来对节点进行有序排列)
+	Val   Value   // 卫星数据
+}
+
+func (this *NodeData) LessThan(other *NodeData) bool {
+	return this.Score < other.Score ||
+		this.Score == other.Score && this.Val.LessThan(other.Val)
+}
+
+func (this *NodeData) EqualTo(other *NodeData) bool {
+	return this.Score == other.Score && this.Val.EqualTo(other.Val)
+}
 
 type Node struct {
 	Levels   []*SkipListLevel // 向前的(每个高度的下一个)结点数组
 	Backward *Node            // 上一个结点(这样最下层就是双向链表，方便向后的遍历)
-	Score    float64          // 分数(跳跃表根据该数值来对节点进行有序排列)
-	Val      Value            // 卫星数据
+	Data     *NodeData        // 结点携带的数据(包含分数)
 }
 
 type RangeSpecifiedBase struct {
@@ -77,19 +90,18 @@ type ValueRangeSpecified struct {
 /*
 	method of Node
 */
-func CreateNode(level int, score float64, data Value) *Node {
+func CreateNode(level int, data *NodeData) *Node {
 	levelArr := make([]*SkipListLevel, level)
-	for i:=0; i<level; i++ {
+	for i := 0; i < level; i++ {
 		levelArr[i] = &SkipListLevel{
 			Forward: nil,
-			Span: 0,
+			Span:    0,
 		}
 	}
 	node := &Node{
 		Levels:   levelArr,
 		Backward: nil,
-		Score:    score,
-		Val:      data,
+		Data:     data,
 	}
 	return node
 }
@@ -110,8 +122,11 @@ func NewSkipListByParams(nodeLevelUpProb float32) *SkipList {
 		"提升节点高度概率不正确:", nodeLevelUpProb, "正常范围:[0.0,1)")
 	
 	skipList := &SkipList{
-		Head:        CreateNode(SKIPLIST_MAXLEVEL, 0, nil),
-		Tail: nil,
+		Head: CreateNode(SKIPLIST_MAXLEVEL, &NodeData{
+			Score: 0,
+			Val:   nil,
+		}),
+		Tail:        nil,
 		Length:      0,
 		Level:       0,
 		LevelUpProb: nodeLevelUpProb,
@@ -121,16 +136,16 @@ func NewSkipListByParams(nodeLevelUpProb float32) *SkipList {
 
 /*
  跳跃表基本操作（增删改查）
- */
+*/
 
 // 根据分数和数据查找结点
 // 时间复杂度为O(logn)
 // 空间复杂度为O(1)
-func (this *SkipList) Get(score float64, val Value) (*Node, bool) {
+func (this *SkipList) Get(score float64, data *NodeData) (*Node, bool) {
 	// 断言(判断传入的分数值)
 	assert.Assert(!math.IsNaN(score), "score is not a number:", score)
 	// 断言(不允许传入nil)
-	assert.Assert(val != nil, "val must not be nil, score:", score)
+	assert.Assert(data != nil, "data must not be nil, score:", score)
 	
 	prev := this.Head
 	for i := this.Level - 1; i >= 0; i-- {
@@ -138,15 +153,12 @@ func (this *SkipList) Get(score float64, val Value) (*Node, bool) {
 		// 1.指定分数大于当前结点的分数，说明要查找的节点一定在当前结点的前方;
 		// 2.当前节点不能是(哨兵)尾结点
 		current := prev.Levels[i].Forward
-		for current != nil &&
-			(current.Score < score ||
-				current.Score == score && current.Val.LessThan(val)) {
+		for current != nil && current.Data.LessThan(data) {
 			// 双指针继续向前移动
 			prev = current
 			current = prev.Levels[i].Forward
 		}
-		if current != nil &&
-			(current.Score == score && current.Val.EqualTo(val)) {
+		if current != nil && current.Data.EqualTo(data) {
 			// 找到了
 			return current, true
 		}
@@ -161,11 +173,11 @@ func (this *SkipList) Get(score float64, val Value) (*Node, bool) {
 // 需要由调用者保证不插入重复的结点,如果结点已存在则会插入失败
 // 时间复杂度为O(logn)
 // 空间复杂度为O(1)
-func (this *SkipList) Insert(score float64, val Value) (*Node, bool) {
-	// 断言(判断传入的分数值)
-	assert.Assert(!math.IsNaN(score), "score is not a number:", score)
+func (this *SkipList) Insert(data *NodeData) (*Node, bool) {
 	// 断言(不允许传入nil)
-	assert.Assert(val != nil, "val must not be nil, score:", score)
+	assert.Assert(data != nil, "data must not be nil")
+	// 断言(判断传入的分数值)
+	assert.Assert(!math.IsNaN(data.Score), "score is not a number:", data.Score)
 	
 	//注意这里，使用数组而不是切片，避免不必要的堆内存分配(插入操作可能会很频繁)
 	// 当前这种情况，(只要该函数不返回数组)数组就是分配在栈上的
@@ -184,9 +196,7 @@ func (this *SkipList) Insert(score float64, val Value) (*Node, bool) {
 		}
 		
 		current := prev.Levels[i].Forward
-		for current != nil &&
-			(current.Score < score ||
-				current.Score == score && current.Val.LessThan(val)) {
+		for current != nil && current.Data.LessThan(data) {
 			// 指针向前行进说明，要插入的结点在当前结点的前方
 			// 那么加上当前结点的跨度
 			rank[i] += prev.Levels[i].Span
@@ -196,8 +206,7 @@ func (this *SkipList) Insert(score float64, val Value) (*Node, bool) {
 			// 当前层链表，当前指针也前进一个节点
 			current = prev.Levels[i].Forward
 		}
-		if current != nil &&
-			(current.Score == score && current.Val.EqualTo(val)) {
+		if current != nil && current.Data.EqualTo(data) {
 			// 如果逻辑走到这里，意味着将插入重复元素(不允许插入重复元素)
 			// 返回已存在的元素
 			// BTW,如果调用者能够保证不会插入重复的元素，那么这里的判断就是不必要的
@@ -222,7 +231,7 @@ func (this *SkipList) Insert(score float64, val Value) (*Node, bool) {
 	}
 	
 	//	1.创建新的结点,设置相关数据;2.并插入指定位置,并且更新和维护结点每一层的索引关系
-	newNode := CreateNode(level, score, val)
+	newNode := CreateNode(level, data)
 	for i := 0; i < level; i++ {
 		// 将每一层向前(方向)的链表都重新链接起来
 		newNode.Levels[i].Forward = prevNodes[i].Levels[i].Forward
@@ -271,13 +280,11 @@ func (this *SkipList) Insert(score float64, val Value) (*Node, bool) {
 
 // 通过分数和值查找指定结点，并更新前置结点数组
 // 注意和Get方法区分：Get方法找到结点就返回，这个方法还要更新前置结点数组，更消耗一些
-func (this *SkipList) findNode(score float64, val Value, prevNodes *[SKIPLIST_MAXLEVEL]*Node) (*Node, bool) {
+func (this *SkipList) findNode(data *NodeData, prevNodes *[SKIPLIST_MAXLEVEL]*Node) (*Node, bool) {
 	prev := this.Head
 	for i := this.Level - 1; i >= 0; i-- {
 		current := prev.Levels[i].Forward
-		for current != nil &&
-			(current.Score < score ||
-				current.Score == score && current.Val.LessThan(val)) {
+		for current != nil && current.Data.LessThan(data) {
 			prev = current
 			current = prev.Levels[i].Forward
 		}
@@ -286,9 +293,7 @@ func (this *SkipList) findNode(score float64, val Value, prevNodes *[SKIPLIST_MA
 		// 继续循环，到下一高度查找和处理
 	}
 	current := prev.Levels[0].Forward
-	if current != nil &&
-		current.Score == score &&
-		current.Val.EqualTo(val) {
+	if current != nil && current.Data.EqualTo(data) {
 		return current, true
 	}
 	// 找不到指定的结点(必须要分数和数据都等，才算是同一个结点)
@@ -336,16 +341,16 @@ func (this *SkipList) deleteNode(current *Node, prevNodes *[SKIPLIST_MAXLEVEL]*N
 // 根据分数和值，删除指定结点
 // 时间复杂度为O(logn)
 // 空间复杂度为O(1)
-func (this *SkipList) Delete(score float64, val Value) (*Node, bool) {
-	// 断言(判断传入的分数值)
-	assert.Assert(!math.IsNaN(score), "score is not a number:", score)
+func (this *SkipList) Delete(data *NodeData) (*Node, bool) {
 	// 断言(不允许传入nil)
-	assert.Assert(val != nil, "val must not be nil, score:", score)
+	assert.Assert(data != nil, "val must not be nil")
+	// 断言(判断传入的分数值)
+	assert.Assert(!math.IsNaN(data.Score), "score is not a number:", data.Score)
 	
 	// 注意这里，使用数组而不是切片，避免不必要的堆内存分配
 	// 当前这种情况，(只要该函数不返回数组)数组就是分配在栈上的
 	prevNodes := [SKIPLIST_MAXLEVEL]*Node{}
-	current, ok := this.findNode(score, val, &prevNodes)
+	current, ok := this.findNode(data, &prevNodes)
 	if !ok {
 		return current, ok
 	}
@@ -356,47 +361,12 @@ func (this *SkipList) Delete(score float64, val Value) (*Node, bool) {
  rank相关操作
 */
 
-func (this *SkipList) DeleteRangeByRank(start int, end int) int{
-	assert.Assert(start > 0 && end > 0 && start <= end, "rank范围不合法, start:", start, " end:", end)
-	
-	// 注意这里，使用数组而不是切片，避免不必要的堆内存分配
-	// 当前这种情况，(只要该函数不返回数组)数组就是分配在栈上的
-	prevNodes := [SKIPLIST_MAXLEVEL]*Node{}
-	traversed := 0
-	prev := this.Head
-	var current *Node = nil
-	for i := this.Level-1; i >= 0; i-- {
-		current = prev.Levels[i].Forward
-		// 走过的跨度小于指定的起始位置时继续在当前高度向右前进
-		for current != nil &&
-			(traversed + prev.Levels[i].Span) < start {
-			prev = current
-			current = prev.Levels[i].Forward
-		}
-		prevNodes[i] = prev
-	}
-	// 循环结束，找到在指定范围中最小的结点(如果没有就是nil)
-	
-	// 前面的for循环累加跨度确定了前置结点的排名，这里加一得到当前结点的排名
-	traversed++
-	count := 0
-	// 在给定的排名范围内，依次删除结点
-	for current != nil && traversed <= end {
-		next := current.Levels[0].Forward
-		this.deleteNode(current, &prevNodes)
-		count++
-		traversed++
-		current = next
-	}
-	return count
-}
-
 // 这个方法的实现和Get()几乎一模一样
-func (this *SkipList) GetRank(score float64, val Value) int{
-	// 断言(判断传入的分数值)
-	assert.Assert(!math.IsNaN(score), "score is not a number:", score)
+func (this *SkipList) GetRank(data *NodeData) int {
 	// 断言(不允许传入nil)
-	assert.Assert(val != nil, "val must not be nil, score:", score)
+	assert.Assert(data != nil, "val must not be nil")
+	// 断言(判断传入的分数值)
+	assert.Assert(!math.IsNaN(data.Score), "score is not a number:", data.Score)
 	
 	rank := 0
 	prev := this.Head
@@ -405,9 +375,7 @@ func (this *SkipList) GetRank(score float64, val Value) int{
 		// 1.指定分数大于当前结点的分数，说明要查找的节点一定在当前结点的前方;
 		// 2.当前节点不能是(哨兵)尾结点
 		current := prev.Levels[i].Forward
-		for current != nil &&
-			(current.Score < score ||
-				current.Score == score && current.Val.LessThan(val)) {
+		for current != nil && current.Data.LessThan(data) {
 			// 累计跨度
 			rank += prev.Levels[i].Span
 			
@@ -415,8 +383,7 @@ func (this *SkipList) GetRank(score float64, val Value) int{
 			prev = current
 			current = prev.Levels[i].Forward
 		}
-		if current != nil &&
-			(current.Score == score && current.Val.EqualTo(val)) {
+		if current != nil && current.Data.EqualTo(data) {
 			// 找到了
 			return rank
 		}
@@ -428,22 +395,22 @@ func (this *SkipList) GetRank(score float64, val Value) int{
 	return 0
 }
 
-func (this *SkipList) GetNodeByRank(rank int) *Node{
+func (this *SkipList) GetNodeByRank(rank int) *Node {
 	assert.Assert(rank > 0, "rank must greater than 0,rank:", rank)
 	
 	traversed := 0
 	prev := this.Head
-	for i := this.Level-1; i >= 0; i-- {
-		current	:= prev.Levels[i].Forward
-		// 当在当前高度，累计的跨度小于指定排名时继续向右查找
+	for i := this.Level - 1; i >= 0; i-- {
+		current := prev.Levels[i].Forward
+		// 当在当前高度，累计的跨度小于等于指定排名时继续向右查找
 		for current != nil &&
-			(traversed + prev.Levels[i].Span) <= rank {
+			(traversed+prev.Levels[i].Span) <= rank {
 			// 累加跨度
 			traversed += prev.Levels[i].Span
 			
 			// 指针前进
 			prev = current
-			current	= prev.Levels[i].Forward
+			current = prev.Levels[i].Forward
 		}
 		if traversed == rank {
 			return prev
@@ -453,21 +420,78 @@ func (this *SkipList) GetNodeByRank(rank int) *Node{
 	return nil
 }
 
-/*
- Score相关操作
- */
+func (this *SkipList) GetRangeByRank(start int, end int) []*NodeData {
+	assert.Assert(start > 0 && end > 0 && start <= end, "rank范围不合法, start:", start, " end:", end)
+	
+	// 找到在指定范围中最小的结点(如果没有就是nil)
+	current := this.GetNodeByRank(start)
+	traversed := start
+	datas := make([]*NodeData, 0, 4)
+	// 在给定的排名范围内，依次遍历结点
+	for current != nil && traversed <= end {
+		next := current.Levels[0].Forward
+		datas = append(datas, current.Data)
+		traversed++
+		current = next
+	}
+	return datas
+}
 
-func (this *SkipList) UpdateScore(score float64, newScore float64, val Value) (*Node, bool) {
-	// 断言(判断传入的分数值)
-	assert.Assert(!math.IsNaN(score), "score is not a number:", score)
-	assert.Assert(!math.IsNaN(newScore), "newScore is not a number:", newScore)
-	// 断言(不允许传入nil)
-	assert.Assert(val != nil, "val must not be nil")
+func (this *SkipList) DeleteRangeByRank(start int, end int) []*NodeData {
+	assert.Assert(start > 0 && end > 0 && start <= end, "rank范围不合法, start:", start, " end:", end)
 	
 	// 注意这里，使用数组而不是切片，避免不必要的堆内存分配
 	// 当前这种情况，(只要该函数不返回数组)数组就是分配在栈上的
 	prevNodes := [SKIPLIST_MAXLEVEL]*Node{}
-	current, ok := this.findNode(score, val, &prevNodes)
+	traversed := 0
+	prev := this.Head
+	var current *Node = nil
+	for i := this.Level - 1; i >= 0; i-- {
+		current = prev.Levels[i].Forward
+		// 走过的跨度小于指定的起始位置时继续在当前高度向右前进
+		for current != nil &&
+			(traversed+prev.Levels[i].Span) < start {
+			// 累加跨度
+			traversed += prev.Levels[i].Span
+			
+			prev = current
+			current = prev.Levels[i].Forward
+		}
+		prevNodes[i] = prev
+	}
+	// 循环结束，找到在指定范围中最小的结点(如果没有就是nil)
+	
+	// 前面的for循环累加跨度确定了前置结点的排名，这里加一得到当前结点的排名
+	traversed++
+	assert.Assert(traversed == start,
+		"traversed must equal to start. traversed:", traversed, " start:", start)
+	// 在给定的排名范围内，依次删除结点
+	deleted := make([]*NodeData, 0, 4)
+	for current != nil && traversed <= end {
+		next := current.Levels[0].Forward
+		this.deleteNode(current, &prevNodes)
+		deleted = append(deleted, current.Data)
+		traversed++
+		current = next
+	}
+	return deleted
+}
+
+/*
+ Score相关操作
+ */
+
+func (this *SkipList) UpdateScore(data *NodeData, newScore float64) (*Node, bool) {
+	// 断言(不允许传入nil)
+	assert.Assert(data != nil, "data must not be nil")
+	// 断言(判断传入的分数值)
+	assert.Assert(!math.IsNaN(data.Score), "oldScore is not a number:", data.Score)
+	assert.Assert(!math.IsNaN(newScore), "newScore is not a number:", newScore)
+	
+	// 注意这里，使用数组而不是切片，避免不必要的堆内存分配
+	// 当前这种情况，(只要该函数不返回数组)数组就是分配在栈上的
+	prevNodes := [SKIPLIST_MAXLEVEL]*Node{}
+	current, ok := this.findNode(data, &prevNodes)
 	if !ok {
 		// 找不到指定结点，就返回
 		return current, ok
@@ -476,16 +500,17 @@ func (this *SkipList) UpdateScore(score float64, newScore float64, val Value) (*
 	// 先看能不能复用之前的结点对象
 	// 如果新分数和旧的分数的位置一样不会变化的话就可以复用之前的旧结点
 	// 那么就只需要更新结点的分数即可
-	if (current.Backward == nil || current.Backward.Score < newScore) &&
-		(current.Levels[0].Forward == nil || current.Levels[0].Forward.Score > newScore) {
-		current.Score = newScore
+	if (current.Backward == nil || current.Backward.Data.Score < newScore) &&
+		(current.Levels[0].Forward == nil || current.Levels[0].Forward.Data.Score > newScore) {
+		current.Data.Score = newScore
 		return current, true
 	}
 	
 	// 不能复用的话，那就需要删除结点
 	this.deleteNode(current, &prevNodes)
-	// 然后插入新的结点
-	return this.Insert(newScore, val)
+	// 然后插入新的结点 (前文的逻辑已经保证了这里肯定能插入成功)
+	data.Score = newScore
+	return this.Insert(data)
 }
 
 func scoreGeaterThanMin(score float64, r *RangeSpecified) bool{
@@ -516,7 +541,7 @@ func (this *SkipList) isInRange(r *RangeSpecified) bool{
 	// 即尾结点的分数要比范围的最小值大才合法
 	last := this.Tail
 	if last == nil ||
-		!scoreGeaterThanMin(last.Score, r) {
+		!scoreGeaterThanMin(last.Data.Score, r) {
 		return false
 	}
 	
@@ -524,7 +549,7 @@ func (this *SkipList) isInRange(r *RangeSpecified) bool{
 	// 即第一个结点的分数要比范围的最大值小才合法
 	first := this.Head.Levels[0].Forward
 	if first == nil ||
-		!scoreLessThanMax(first.Score, r) {
+		!scoreLessThanMax(first.Data.Score, r) {
 		return false
 	}
 	
@@ -544,7 +569,7 @@ func (this *SkipList) FirstInRange(r *RangeSpecified) *Node{
 		// 如果当前结点的分数小于指定范围的最小分数
 		// 则继续在当前高度向右查找
 		for current != nil &&
-				!scoreGeaterThanMin(current.Score, r) {
+			!scoreGeaterThanMin(current.Data.Score, r) {
 			prev = current
 			current = prev.Levels[i].Forward
 		}
@@ -556,7 +581,7 @@ func (this *SkipList) FirstInRange(r *RangeSpecified) *Node{
 	
 	// 再判断一下找到的结点的分数
 	// 一定要比指定范围的最大值小才行
-	if !scoreLessThanMax(current.Score, r) {
+	if !scoreLessThanMax(current.Data.Score, r) {
 		return nil
 	}
 	return current
@@ -574,7 +599,7 @@ func (this *SkipList) LastInRange(r *RangeSpecified) *Node{
 		// 如果当前结点的分数小于指定范围的最大分数
 		// 则继续在当前高度向右查找
 		for current != nil &&
-				scoreLessThanMax(current.Score, r) {
+			scoreLessThanMax(current.Data.Score, r) {
 			prev = current
 			current = prev.Levels[i].Forward
 		}
@@ -586,24 +611,37 @@ func (this *SkipList) LastInRange(r *RangeSpecified) *Node{
 	
 	// 再判断一下找到的结点的分数
 	// 一定要比指定范围的最小值大才行
-	if !scoreGeaterThanMin(prev.Score, r) {
+	if !scoreGeaterThanMin(prev.Data.Score, r) {
 		return nil
 	}
 	return prev
 }
 
-func (this *SkipList) DeleteRangeByScore(r *RangeSpecified) int{
+func (this *SkipList) GetRangeByScore(r *RangeSpecified) []*NodeData {
+	current := this.FirstInRange(r)
+	datas := make([]*NodeData, 0, 4)
+	// 从范围中最小的结点开始向右遍历，依次遍历结点
+	// 直到范围结束
+	for current != nil && scoreLessThanMax(current.Data.Score, r) {
+		next := current.Levels[0].Forward
+		datas = append(datas, current.Data)
+		current = next
+	}
+	return datas
+}
+
+func (this *SkipList) DeleteRangeByScore(r *RangeSpecified) []*NodeData {
 	// 注意这里，使用数组而不是切片，避免不必要的堆内存分配
 	// 当前这种情况，(只要该函数不返回数组)数组就是分配在栈上的
 	prevNodes := [SKIPLIST_MAXLEVEL]*Node{}
 	prev := this.Head
 	var current *Node = nil
-	for i := this.Level-1; i >= 0; i-- {
+	for i := this.Level - 1; i >= 0; i-- {
 		current = prev.Levels[i].Forward
 		// 当前结点的分数小于指定的范围的最小分数就继续在当前高度向右查找
 		// !scoreGeaterThanMin == ValueLessThanMin
 		for current != nil &&
-				!scoreGeaterThanMin(current.Score, r) {
+			!scoreGeaterThanMin(current.Data.Score, r) {
 			prev = current
 			current = prev.Levels[i].Forward
 		}
@@ -611,16 +649,16 @@ func (this *SkipList) DeleteRangeByScore(r *RangeSpecified) int{
 	}
 	// 循环结束，找到在指定范围中最小的结点(如果没有就是nil)
 	
-	count := 0
+	deleted := make([]*NodeData, 0, 4)
 	// 从范围中最小的结点开始向右遍历，依次删除结点
 	// 直到范围结束
-	for current != nil && scoreLessThanMax(current.Score, r) {
+	for current != nil && scoreLessThanMax(current.Data.Score, r) {
 		next := current.Levels[0].Forward
 		this.deleteNode(current, &prevNodes)
-		count++
+		deleted = append(deleted, current.Data)
 		current = next
 	}
-	return count
+	return deleted
 }
 
 /*
@@ -655,14 +693,14 @@ func (this *SkipList) isInValueRange(r *ValueRangeSpecified) bool{
 	// 判断最右边值边界是否合法
 	// 即尾结点的值要比范围的最小值大才合法
 	last := this.Tail
-	if last == nil || !valueGeaterThanMin(last.Val, r) {
+	if last == nil || !valueGeaterThanMin(last.Data.Val, r) {
 		return false
 	}
 	
 	// 再判断最左边值是否合法
 	// 即第一个结点的值要比范围的最大值小才合法
 	first := this.Head.Levels[0].Forward
-	if first == nil || !valueLessThanMax(first.Val, r) {
+	if first == nil || !valueLessThanMax(first.Data.Val, r) {
 		return false
 	}
 	
@@ -682,7 +720,7 @@ func (this *SkipList) FirstInValueRange(r *ValueRangeSpecified) *Node{
 		// 如果当前结点的值小于指定范围的最小值
 		// 则继续在当前高度向右查找
 		for current != nil &&
-				!valueGeaterThanMin(current.Val, r) {
+			!valueGeaterThanMin(current.Data.Val, r) {
 			prev = current
 			current = prev.Levels[i].Forward
 		}
@@ -694,7 +732,7 @@ func (this *SkipList) FirstInValueRange(r *ValueRangeSpecified) *Node{
 	
 	// 再判断一下找到的结点的值
 	// 一定要比指定范围的最大值小才行
-	if !valueLessThanMax(current.Val, r) {
+	if !valueLessThanMax(current.Data.Val, r) {
 		return nil
 	}
 	return current
@@ -712,7 +750,7 @@ func (this *SkipList) LastInValueRange(r *ValueRangeSpecified) *Node{
 		// 如果当前结点的值小于指定范围的最大值
 		// 则继续在当前高度向右查找
 		for current != nil &&
-			valueLessThanMax(current.Val, r) {
+			valueLessThanMax(current.Data.Val, r) {
 			prev = current
 			current = prev.Levels[i].Forward
 		}
@@ -724,24 +762,24 @@ func (this *SkipList) LastInValueRange(r *ValueRangeSpecified) *Node{
 	
 	// 再判断一下找到的结点的值
 	// 一定要比指定范围的最小值大才行
-	if !valueGeaterThanMin(prev.Val, r) {
+	if !valueGeaterThanMin(prev.Data.Val, r) {
 		return nil
 	}
 	return prev
 }
 
-func (this *SkipList) DeleteRangeByValue(r *ValueRangeSpecified) int{
+func (this *SkipList) DeleteRangeByValue(r *ValueRangeSpecified) []*NodeData {
 	// 注意这里，使用数组而不是切片，避免不必要的堆内存分配
 	// 当前这种情况，(只要该函数不返回数组)数组就是分配在栈上的
 	prevNodes := [SKIPLIST_MAXLEVEL]*Node{}
 	prev := this.Head
 	var current *Node = nil
-	for i := this.Level-1; i >= 0; i-- {
+	for i := this.Level - 1; i >= 0; i-- {
 		current = prev.Levels[i].Forward
 		// 当前结点的值小于指定的范围的最小值就继续在当前高度向右查找
 		// !valueGeaterThanMin == ValueLessThanMin
 		for current != nil &&
-			!valueGeaterThanMin(current.Val, r) {
+			!valueGeaterThanMin(current.Data.Val, r) {
 			prev = current
 			current = prev.Levels[i].Forward
 		}
@@ -749,14 +787,14 @@ func (this *SkipList) DeleteRangeByValue(r *ValueRangeSpecified) int{
 	}
 	// 循环结束，找到在指定范围中最小的结点(如果没有就是nil)
 	
-	count := 0
+	deleted := make([]*NodeData, 0, 4)
 	// 从范围中最小的结点开始向右遍历，依次删除结点
 	// 直到范围结束
-	for current != nil && valueLessThanMax(current.Val, r) {
+	for current != nil && valueLessThanMax(current.Data.Val, r) {
 		next := current.Levels[0].Forward
 		this.deleteNode(current, &prevNodes)
-		count++
+		deleted = append(deleted, current.Data)
 		current = next
 	}
-	return count
+	return deleted
 }
