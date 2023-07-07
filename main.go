@@ -17,6 +17,53 @@
 // 创建日期:2022/6/15
 package main
 
+import (
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+	"yytools/datastructure/sorted_set"
+)
+
+var commands = []string{
+	"sorted_set",
+}
+
+var commandsMap = map[string]bool{
+	"sorted_set": true,
+}
+
 func main() {
-	println("Hello world")
+	// 第一个参数是可执行文件本身的路径
+	// 后续的参数是通过控制台传递的参数
+	args := os.Args[1:]
+	if len(args) == 0 {
+		println("需要传入参数,如需要帮助, 请使用: yytools help")
+		return
+	}
+	command := strings.ToLower(args[0])
+	if command == "help" {
+		println("使用参考：yytools sorted_set 5\n表示执行5轮sorted_set相关测试代码")
+		println("已支持的测试:")
+		for _, str := range commands {
+			println(str)
+		}
+		return
+	}
+	if _, ok := commandsMap[command]; !ok {
+		println("不支持的命令")
+		return
+	}
+	
+	num, err := strconv.Atoi(args[1])
+	if err != nil {
+		fmt.Printf("Command: %s Error: %+v\n", command, err)
+		return
+	}
+	
+	switch command {
+	case "sorted_set":
+		sorted_set.SortedSetTest(num)
+	}
+	
 }

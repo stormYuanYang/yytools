@@ -19,8 +19,10 @@ package sorted_set
 
 import (
 	"fmt"
+	"time"
 	"yytools/algorithm/math"
 	"yytools/common/assert"
+	"yytools/common/constant"
 )
 
 var uniq = int64(0)
@@ -54,9 +56,9 @@ const (
 	TEST_SORTED_SET_SCORE_MAX = 750
 )
 
-func SortedSetIsLegal(ss *SortedSet) {
+func SortedSetMustLegal(ss *SortedSet) {
 	ss.lengthMustEqual()
-
+	
 	current := ss.Sl.Head.Levels[0].Forward
 	rank := 1
 	for current != nil {
@@ -84,21 +86,7 @@ func SortedSetOp_Insert(ss *SortedSet, num int) {
 	}
 }
 
-// 更新分数
-func SortedSetOp_UpdateScore(ss *SortedSet, num int) {
-	for i := 0; i < num; i++ {
-		if ss.Length() > 0 {
-			randomRank := math.RandInt(1, ss.Length())
-			data := ss.GetByRank(randomRank)
-			assert.Assert(data != nil, "data 不能为nil, rank:", randomRank)
-
-			n := math.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX)
-			_, ok := ss.UpdateScore(data.Key, float64(n))
-			assert.Assert(ok, "更新分数不能失败, data:", data, " newScore:", n)
-		}
-	}
-}
-
+// 删除
 func SortedSetOp_Delete(ss *SortedSet, num int) {
 	for i := 0; i < num; i++ {
 		if ss.Length() > 0 {
@@ -110,6 +98,22 @@ func SortedSetOp_Delete(ss *SortedSet, num int) {
 	}
 }
 
+// 更新分数
+func SortedSetOp_UpdateScore(ss *SortedSet, num int) {
+	for i := 0; i < num; i++ {
+		if ss.Length() > 0 {
+			randomRank := math.RandInt(1, ss.Length())
+			data := ss.GetByRank(randomRank)
+			assert.Assert(data != nil, "data 不能为nil, rank:", randomRank)
+			
+			n := math.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX)
+			_, ok := ss.UpdateScore(data.Key, float64(n))
+			assert.Assert(ok, "更新分数不能失败, data:", data, " newScore:", n)
+		}
+	}
+}
+
+// 通过分数范围获得多个元素
 func SortedSetOp_GetRangeByScore(ss *SortedSet, num int) {
 	if ss.Length() > 0 {
 		for i := 0; i < num; i++ {
@@ -118,7 +122,7 @@ func SortedSetOp_GetRangeByScore(ss *SortedSet, num int) {
 			if min > max {
 				min, max = max, min
 			}
-
+			
 			minEx := false
 			if math.RandInt(0, 1) == 1 {
 				minEx = true
@@ -155,36 +159,177 @@ func SortedSetOp_GetRangeByScore(ss *SortedSet, num int) {
 	}
 }
 
-func SortedSetOp_GetRank(ss *SortedSet, num int) {
+func SortedSetOp_DeleteRangeByScore(ss *SortedSet, num int) {
 	for i := 0; i < num; i++ {
-		randomRank := math.RandInt(1, ss.Length())
-		data := ss.GetByRank(randomRank)
-		assert.Assert(data != nil, "data 不能为nil, rank:", randomRank)
-
-		rank := ss.GetRank(data.Key)
-		assert.Assert(randomRank == rank, "排名不一致, randomRank:", randomRank, " rank:", rank, " key:", data.Key)
+		if ss.Length() == 0 {
+			break
+		}
+		min := float64(math.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX))
+		max := float64(math.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX))
+		if min > max {
+			min, max = max, min
+		}
+		
+		minEx := false
+		if math.RandInt(0, 1) == 1 {
+			minEx = true
+		}
+		
+		maxEx := false
+		if math.RandInt(0, 1) == 1 {
+			maxEx = true
+		}
+		
+		datas := ss.DeleteRangeByScore(min, minEx, max, maxEx)
+		
+		// 判断是否有序
+		for j := 0; j < len(datas); j++ {
+			if j+1 < len(datas) {
+				assert.Assert(datas[j].LessThan(datas[j+1]), "返回的元素必须是有序的")
+			}
+		}
+		
+		// 判断返回的元素是否在指定范围内
+		for _, one := range datas {
+			if minEx {
+				assert.Assert(one.Score > min, "分数要在范围内,", "score:", one.Score, " max:", max)
+			} else {
+				assert.Assert(one.Score >= min, "分数要在范围内,", "score:", one.Score, " max:", max)
+			}
+			if maxEx {
+				assert.Assert(one.Score < max, "分数要在范围内,", "score:", one.Score, " max:", max)
+			} else {
+				assert.Assert(one.Score <= max, "分数要在范围内,", "score:", one.Score, " max:", max)
+			}
+		}
 	}
 }
 
-func SortedSetTest() {
-	num := 10000
-	for j := 0; j < 10; j++ {
-		ss := NewSortedSet()
-		SortedSetOp_Insert(ss, num)
-
-		SortedSetOp_UpdateScore(ss, num/2)
-		SortedSetIsLegal(ss)
-
-		SortedSetOp_GetRangeByScore(ss, 100)
-		SortedSetIsLegal(ss)
-
-		SortedSetOp_GetRank(ss, num)
-		SortedSetIsLegal(ss)
-
-		delNum := math.RandInt(1, num/2)
-		SortedSetOp_Delete(ss, delNum)
-		SortedSetIsLegal(ss)
-
-		println("completed:", j)
+// 获取排名 和 通过排名获取元素 互相验证
+func SortedSetOp_GetRank(ss *SortedSet, num int) {
+	for i := 0; i < num; i++ {
+		if ss.Length() > 0 {
+			randomRank := math.RandInt(1, ss.Length())
+			data := ss.GetByRank(randomRank)
+			assert.Assert(data != nil, "data 不能为nil, rank:", randomRank)
+			
+			rank := ss.GetRank(data.Key)
+			assert.Assert(randomRank == rank, "排名不一致, randomRank:", randomRank, " rank:", rank, " key:", data.Key)
+		}
 	}
+}
+
+// 通过排名范围获取元素
+func SortedSetOp_GetRangeByRank(ss *SortedSet, num int) {
+	for i := 0; i < num; i++ {
+		length := ss.Length()
+		if length == 0 {
+			return
+		}
+		start := math.RandInt(1, length)
+		end := math.RandInt(1, length)
+		if start > end {
+			start, end = end, start
+		}
+		datas := ss.GetRangeByRank(start, end)
+		for j, one := range datas {
+			rank := ss.GetRank(one.Key)
+			assert.Assert(rank == start+j, "排名不正确", rank, " ", start+j)
+			
+			if j < len(datas)-1 {
+				assert.Assert(datas[j].LessThan(datas[j+1]), "返回的元素必须是有序的")
+			}
+		}
+	}
+}
+
+func SortedSetOp_DeleteRangeByRank(ss *SortedSet, num int) {
+	for i := 0; i < num; i++ {
+		length := ss.Length()
+		if length > 0 {
+			start := math.RandInt(1, length)
+			end := math.RandInt(1, length)
+			if start > end {
+				start, end = end, start
+			}
+			datas := ss.DeleteRangeByRank(start, end)
+			for j, one := range datas {
+				rank := ss.GetRank(one.Key)
+				assert.Assert(rank == 0, "排名不正确:", rank)
+				
+				if j < len(datas)-1 {
+					assert.Assert(datas[j].LessThan(datas[j+1]), "返回的元素必须是有序的")
+				}
+			}
+		}
+	}
+}
+
+const (
+	SORTEDSETOP_INSERT             = 0
+	SORTEDSETOP_DELETE             = 1
+	SORTEDSETOP_UPDATESCORE        = 2
+	SORTEDSETOP_GETRANGEBYSCORE    = 3
+	SORTEDSETOP_DELETERANGEBYSCORE = 4
+	SORTEDSETOP_GETRANK            = 5
+	SORTEDSETOP_GETRANGEBYRANK     = 6
+	SORTEDSETOP_DELETERANGEBYRANK  = 7
+)
+
+var SortedSetOp_Handlers = []func(ss *SortedSet, num int){
+	SortedSetOp_Insert,
+	SortedSetOp_Delete,
+	SortedSetOp_UpdateScore,
+	SortedSetOp_GetRank,
+}
+
+var SortedSetOp_RangeHandlers = []func(ss *SortedSet, num int){
+	SortedSetOp_GetRangeByScore,
+	SortedSetOp_DeleteRangeByScore,
+	SortedSetOp_GetRangeByRank,
+	SortedSetOp_DeleteRangeByRank,
+}
+
+func SortedSetTest(total int) {
+	math.RandSeed(time.Now().UnixMilli())
+	nums := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000,
+		constant.TEN_THOUSAND, constant.HUNDRED_THOUSAND, constant.MILLION}
+	for a := 1; a <= total; a++ {
+		fmt.Printf("-------第%d轮测试开始-------\n", a)
+		for k, n := range nums {
+			ss := NewSortedSet()
+			// 插入指定数量的元素
+			SortedSetOp_Insert(ss, n)
+			
+			// 基本操作的测试次数
+			opCnt := math.RandInt(constant.HUNDRED_THOUSAND, constant.HUNDRED_THOUSAND)
+			// range相关操作都很耗时，减少测试的量级
+			rangeOpCnt := math.RandInt(10, 10)
+			opWeights := []int{opCnt, rangeOpCnt}
+			
+			realCnt := []int{0, 0}
+			// 根据操作次数得到对应的执行概率
+			aliasMethod := math.NewVoseAliasMethod(opWeights)
+			for i := 0; i < opCnt+rangeOpCnt; i++ {
+				index := aliasMethod.Generate()
+				if index == 0 {
+					op := math.RandInt(0, len(SortedSetOp_Handlers)-1)
+					fn := SortedSetOp_Handlers[op]
+					fn(ss, 1)
+				} else if index == 1 {
+					rangeOp := math.RandInt(0, len(SortedSetOp_RangeHandlers)-1)
+					fn := SortedSetOp_RangeHandlers[rangeOp]
+					fn(ss, 1)
+				} else {
+					assert.Assert(false, "不应该执行到这里", opCnt, " ", rangeOpCnt)
+				}
+				realCnt[index]++
+			}
+			SortedSetMustLegal(ss)
+			fmt.Printf("测试#%d结束. 初始长度:%d, 当前长度:%d, 执行基本操作:%d次(理论:%d)，执行range操作:%d次(理论:%d)\n",
+				k+1, n, ss.Length(), realCnt[0], opCnt, realCnt[1], rangeOpCnt)
+		}
+		fmt.Printf("-------第%d轮测试结束-------\n\n", a)
+	}
+	println("测试结束...")
 }
