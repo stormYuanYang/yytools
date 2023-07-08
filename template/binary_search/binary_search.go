@@ -20,8 +20,6 @@
 package binary_search
 
 import (
-	"archive/tar"
-	"git.tap4fun.com/fw/tse/core/util/leakybuf"
 	"yytools/common/assert"
 )
 
