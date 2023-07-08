@@ -15,7 +15,7 @@
 
 // 作者:  yangyuan
 // 创建日期:2022/6/15
-package math
+package random
 
 import (
 	"math"

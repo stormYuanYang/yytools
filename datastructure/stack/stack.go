@@ -24,7 +24,7 @@ import (
 )
 
 type InterfaceStack interface {
-	Len() int              // 栈的长度
+	Length() int           // 栈的长度
 	Empty() bool           // 判断栈是否为空
 	Push(item interface{}) // 入栈
 	Pop() interface{}      // 出栈
@@ -54,12 +54,12 @@ func NewStackWithSize(size int) *Stack {
 	实现相应的接口方法
 */
 
-func (this *Stack) Len() int {
+func (this *Stack) Length() int {
 	return len(this.Items)
 }
 
 func (this *Stack) Empty() bool {
-	return this.Len() == 0
+	return this.Length() == 0
 }
 
 func (this *Stack) Push(item interface{}) {
@@ -81,7 +81,7 @@ func (this *Stack) tryShrink() {
 
 // 需要调用者保证(可以调用Empty()判断)，栈里还有元素可以出栈
 func (this *Stack) Pop() interface{} {
-	length := this.Len()
+	length := this.Length()
 	assert.Assert(length > 0, "栈空了，无法出栈!")
 	item := this.Items[length-1]
 	this.Items[length-1] = nil // 为了安全（避免内存泄露）
@@ -97,7 +97,7 @@ func (this *Stack) Pop() interface{} {
 
 // 需要调用者保证(可以调用Empty()判断)，栈里还有元素可以查看
 func (this *Stack) Top() (item interface{}) {
-	length := this.Len()
+	length := this.Length()
 	assert.Assert(length > 0, "栈空了，无法出栈!")
 	return this.Items[length-1]
 }

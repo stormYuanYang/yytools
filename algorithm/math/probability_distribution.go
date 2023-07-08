@@ -18,6 +18,7 @@
 package math
 
 import (
+	"yytools/algorithm/math/random"
 	"yytools/common/assert"
 	"yytools/datastructure/stack"
 )
@@ -45,7 +46,7 @@ func CalculateIndexByWeight(weightList []int32) int32 {
 	// 此时可以认为就是等概率计算各个元素的概率
 	if totalWeight == 0 {
 		// 等概率随机数组下标
-		return RandInt32(0, int32(len(weightList))-1)
+		return random.RandInt32(0, int32(len(weightList))-1)
 	}
 	// 接下来，总权重至少为1
 	return calcIndexWithWeight(weightList, totalWeight)
@@ -71,7 +72,7 @@ func CalculateIndexListByWeight(weightList []int32, num int32) []int32 {
 		// 等概率随机数组下标
 		indexList := make([]int32, num)
 		for i := 0; i < int(num); i++ {
-			indexList[i] = RandInt32(0, int32(len(weightList))-1)
+			indexList[i] = random.RandInt32(0, int32(len(weightList))-1)
 		}
 		return indexList
 	}
@@ -86,7 +87,7 @@ func CalculateIndexListByWeight(weightList []int32, num int32) []int32 {
 func calcIndexWithWeight(weightList []int32, totalWeight int32) int32 {
 	assert.Assert(totalWeight > 0, "总权重需要大于0：", totalWeight)
 	// 先根据总权重计算一个随机值，范围在[1,totalWeight]
-	randNum := RandInt32(1, totalWeight)
+	randNum := random.RandInt32(1, totalWeight)
 	for i, weight := range weightList {
 		// 最后一次循环后，newTotalWeight会等于0,此时必然有randNum > newTotalWeight
 		newTotalWeight := totalWeight - weight
@@ -109,7 +110,7 @@ func calcIndexWithWeightByBinarySearch(tmpList []int32) int32 {
 	totalWeight := tmpList[len(tmpList)-1]
 	assert.Assert(totalWeight > 0, "总权重需要大于0：", totalWeight)
 	// 先根据总权重计算一个随机值，范围在[1,totalWeight]
-	randNum := RandInt32(1, totalWeight)
+	randNum := random.RandInt32(1, totalWeight)
 	index := binarySearchInRange(tmpList, randNum)
 	assert.Assert(index != -1, "未命中任何区间,randNum:", randNum, "totalWeight:", totalWeight)
 	return index
@@ -227,8 +228,8 @@ func NewVoseAliasMethod(weights []int) *VoseAliasMethod {
 // 效率非常高的：时间复杂度O(1)
 func (this *VoseAliasMethod) Generate() int {
 	n := len(this.Prob)
-	i := RandInt(0, n-1) // 随机得到一个概率数组的下标
-	p := RandFloat64()   // 范围：[0.0,1.0)
+	i := random.RandInt(0, n-1) // 随机得到一个概率数组的下标
+	p := random.RandFloat64()   // 范围：[0.0,1.0)
 	// 在[0.0, 1.0)范围内随机得到一个值,用这个值去判断得到该概率还是其别名
 	if float(p) < this.Prob[i] {
 		return i

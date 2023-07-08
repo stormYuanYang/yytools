@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"time"
 	"yytools/algorithm/math"
+	random2 "yytools/algorithm/math/random"
 	"yytools/common/assert"
 	"yytools/common/constant"
 )
@@ -79,7 +80,7 @@ func SortedSetMustLegal(ss *SortedSet) {
 // 插入
 func SortedSetOp_Insert(ss *SortedSet, num int) {
 	for i := 0; i < num; i++ {
-		n := math.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX)
+		n := random2.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX)
 		val := NewVal()
 		data := NewNodeData(val.ID, float64(n), val)
 		assert.Assert(ss.Insert(data), "插入不会失败:", data)
@@ -90,7 +91,7 @@ func SortedSetOp_Insert(ss *SortedSet, num int) {
 func SortedSetOp_Delete(ss *SortedSet, num int) {
 	for i := 0; i < num; i++ {
 		if ss.Length() > 0 {
-			randomRank := math.RandInt(1, ss.Length())
+			randomRank := random2.RandInt(1, ss.Length())
 			data := ss.GetByRank(randomRank)
 			assert.Assert(data != nil, "data 不能为nil, rank:", randomRank)
 			ss.Delete(data.Key)
@@ -102,11 +103,11 @@ func SortedSetOp_Delete(ss *SortedSet, num int) {
 func SortedSetOp_UpdateScore(ss *SortedSet, num int) {
 	for i := 0; i < num; i++ {
 		if ss.Length() > 0 {
-			randomRank := math.RandInt(1, ss.Length())
+			randomRank := random2.RandInt(1, ss.Length())
 			data := ss.GetByRank(randomRank)
 			assert.Assert(data != nil, "data 不能为nil, rank:", randomRank)
 			
-			n := math.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX)
+			n := random2.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX)
 			_, ok := ss.UpdateScore(data.Key, float64(n))
 			assert.Assert(ok, "更新分数不能失败, data:", data, " newScore:", n)
 		}
@@ -117,19 +118,19 @@ func SortedSetOp_UpdateScore(ss *SortedSet, num int) {
 func SortedSetOp_GetRangeByScore(ss *SortedSet, num int) {
 	if ss.Length() > 0 {
 		for i := 0; i < num; i++ {
-			min := float64(math.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX))
-			max := float64(math.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX))
+			min := float64(random2.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX))
+			max := float64(random2.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX))
 			if min > max {
 				min, max = max, min
 			}
 			
 			minEx := false
-			if math.RandInt(0, 1) == 1 {
+			if random2.RandInt(0, 1) == 1 {
 				minEx = true
 			}
-
+			
 			maxEx := false
-			if math.RandInt(0, 1) == 1 {
+			if random2.RandInt(0, 1) == 1 {
 				maxEx = true
 			}
 
@@ -164,19 +165,19 @@ func SortedSetOp_DeleteRangeByScore(ss *SortedSet, num int) {
 		if ss.Length() == 0 {
 			break
 		}
-		min := float64(math.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX))
-		max := float64(math.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX))
+		min := float64(random2.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX))
+		max := float64(random2.RandInt(TEST_SORTED_SET_SCORE_MIN, TEST_SORTED_SET_SCORE_MAX))
 		if min > max {
 			min, max = max, min
 		}
 		
 		minEx := false
-		if math.RandInt(0, 1) == 1 {
+		if random2.RandInt(0, 1) == 1 {
 			minEx = true
 		}
 		
 		maxEx := false
-		if math.RandInt(0, 1) == 1 {
+		if random2.RandInt(0, 1) == 1 {
 			maxEx = true
 		}
 		
@@ -209,7 +210,7 @@ func SortedSetOp_DeleteRangeByScore(ss *SortedSet, num int) {
 func SortedSetOp_GetRank(ss *SortedSet, num int) {
 	for i := 0; i < num; i++ {
 		if ss.Length() > 0 {
-			randomRank := math.RandInt(1, ss.Length())
+			randomRank := random2.RandInt(1, ss.Length())
 			data := ss.GetByRank(randomRank)
 			assert.Assert(data != nil, "data 不能为nil, rank:", randomRank)
 			
@@ -226,8 +227,8 @@ func SortedSetOp_GetRangeByRank(ss *SortedSet, num int) {
 		if length == 0 {
 			return
 		}
-		start := math.RandInt(1, length)
-		end := math.RandInt(1, length)
+		start := random2.RandInt(1, length)
+		end := random2.RandInt(1, length)
 		if start > end {
 			start, end = end, start
 		}
@@ -247,8 +248,8 @@ func SortedSetOp_DeleteRangeByRank(ss *SortedSet, num int) {
 	for i := 0; i < num; i++ {
 		length := ss.Length()
 		if length > 0 {
-			start := math.RandInt(1, length)
-			end := math.RandInt(1, length)
+			start := random2.RandInt(1, length)
+			end := random2.RandInt(1, length)
 			if start > end {
 				start, end = end, start
 			}
@@ -291,7 +292,7 @@ var SortedSetOp_RangeHandlers = []func(ss *SortedSet, num int){
 }
 
 func SortedSetTest(total int) {
-	math.RandSeed(time.Now().UnixMilli())
+	random2.RandSeed(time.Now().UnixMilli())
 	nums := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000,
 		constant.TEN_THOUSAND, constant.HUNDRED_THOUSAND, constant.MILLION}
 	for a := 1; a <= total; a++ {
@@ -302,9 +303,9 @@ func SortedSetTest(total int) {
 			SortedSetOp_Insert(ss, n)
 			
 			// 基本操作的测试次数
-			opCnt := math.RandInt(constant.HUNDRED_THOUSAND, constant.HUNDRED_THOUSAND)
+			opCnt := random2.RandInt(constant.HUNDRED_THOUSAND, constant.HUNDRED_THOUSAND)
 			// range相关操作都很耗时，减少测试的量级
-			rangeOpCnt := math.RandInt(10, 10)
+			rangeOpCnt := random2.RandInt(10, 10)
 			opWeights := []int{opCnt, rangeOpCnt}
 			
 			realCnt := []int{0, 0}
@@ -313,11 +314,11 @@ func SortedSetTest(total int) {
 			for i := 0; i < opCnt+rangeOpCnt; i++ {
 				index := aliasMethod.Generate()
 				if index == 0 {
-					op := math.RandInt(0, len(SortedSetOp_Handlers)-1)
+					op := random2.RandInt(0, len(SortedSetOp_Handlers)-1)
 					fn := SortedSetOp_Handlers[op]
 					fn(ss, 1)
 				} else if index == 1 {
-					rangeOp := math.RandInt(0, len(SortedSetOp_RangeHandlers)-1)
+					rangeOp := random2.RandInt(0, len(SortedSetOp_RangeHandlers)-1)
 					fn := SortedSetOp_RangeHandlers[rangeOp]
 					fn(ss, 1)
 				} else {

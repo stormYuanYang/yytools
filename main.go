@@ -23,14 +23,20 @@ import (
 	"strconv"
 	"strings"
 	"yytools/datastructure/sorted_set"
+	"yytools/datastructure/stack"
 )
+
+var commandsMap = map[string]int{}
 
 var commands = []string{
 	"sorted_set",
+	"stack",
 }
 
-var commandsMap = map[string]bool{
-	"sorted_set": true,
+func init() {
+	for i, str := range commands {
+		commandsMap[str] = i
+	}
 }
 
 func main() {
@@ -64,6 +70,7 @@ func main() {
 	switch command {
 	case "sorted_set":
 		sorted_set.SortedSetTest(num)
+	case "stack":
+		stack.StackTest(num)
 	}
-	
 }

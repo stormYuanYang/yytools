@@ -19,7 +19,7 @@ package test
 
 import (
 	"strconv"
-	"yytools/algorithm/math"
+	"yytools/algorithm/math/random"
 	"yytools/common/assert"
 	"yytools/common/constant"
 	"yytools/datastructure/stack"
@@ -46,7 +46,7 @@ func IntStackTest1() {
 		s := stack.NewStack()
 		for i := 1; i < 10000; i++ {
 			id++
-			r := math.RandInt32(1, constant.TEN_THOUSAND)
+			r := random.RandInt32(1, constant.TEN_THOUSAND)
 			if r < constant.TEN_THOUSAND/2 {
 				s.Push(id)
 			} else {
