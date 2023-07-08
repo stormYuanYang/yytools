@@ -153,6 +153,7 @@ func rightBound(nums []int, target int, left int, right int) int {
 }
 
 // 查找元素的左右边界
+// 可以用力扣题目验证方法的正确性: https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/submissions/
 func SearchBound(nums []int, target int) (int, int) {
 	left := LeftBound(nums, target)
 	if left == -1 {
