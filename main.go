@@ -22,6 +22,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"yytools/common/assert"
 	"yytools/datastructure/sorted_set"
 	"yytools/datastructure/stack"
 )
@@ -33,7 +34,13 @@ var commands = []string{
 	"stack",
 }
 
+var handlers = []func(int){
+	sorted_set.SortedSetTest,
+	stack.StackTest,
+}
+
 func init() {
+	assert.Assert(len(commands) == len(handlers), "len of commands must equal to handlers")
 	for i, str := range commands {
 		commandsMap[str] = i
 	}
@@ -56,7 +63,8 @@ func main() {
 		}
 		return
 	}
-	if _, ok := commandsMap[command]; !ok {
+	index, ok := commandsMap[command]
+	if !ok {
 		println("不支持的命令")
 		return
 	}
@@ -67,10 +75,6 @@ func main() {
 		return
 	}
 	
-	switch command {
-	case "sorted_set":
-		sorted_set.SortedSetTest(num)
-	case "stack":
-		stack.StackTest(num)
-	}
+	handler := handlers[index]
+	handler(num)
 }
