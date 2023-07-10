@@ -292,6 +292,7 @@ var SortedSetOp_RangeHandlers = []func(ss *SortedSet, num int){
 }
 
 func SortedSetTest(total int) {
+	println("有序集合测试开始...")
 	random2.RandSeed(time.Now().UnixMilli())
 	nums := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000,
 		constant.TEN_THOUSAND, constant.HUNDRED_THOUSAND, constant.MILLION}
@@ -332,5 +333,5 @@ func SortedSetTest(total int) {
 		}
 		fmt.Printf("-------第%d轮测试结束-------\n\n", a)
 	}
-	println("测试结束...")
+	println("有序集合测试结束...")
 }

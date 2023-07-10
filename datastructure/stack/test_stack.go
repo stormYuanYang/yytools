@@ -89,6 +89,7 @@ var Stack_Handlers = []func(stack *Stack, num int){
 }
 
 func StackTest(num int) {
+	println("栈测试开始...")
 	random.RandSeed(time.Now().UnixMilli())
 	// 起始规模
 	scale := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000, 10000, 100000, 1000000}

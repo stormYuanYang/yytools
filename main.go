@@ -49,6 +49,14 @@ func init() {
 	}
 }
 
+func testAll(num int) {
+	for i := 0; i < len(handlers); i++ {
+		handler := handlers[i]
+		handler(num)
+	}
+	println("所有测试完毕...")
+}
+
 func main() {
 	// 第一个参数是可执行文件本身的路径
 	// 后续的参数是通过控制台传递的参数
@@ -59,16 +67,12 @@ func main() {
 	}
 	command := strings.ToLower(args[0])
 	if command == "help" {
-		println("使用参考：yytools sorted_set 5\n表示执行5轮sorted_set相关测试代码")
+		println("使用参考：yytools sorted_set 5\n表示执行5轮sorted_set相关测试代码\n yytoools all 5\n表示对所有测试进行5轮测试\n")
 		println("已支持的测试:")
+		println("all")
 		for _, str := range commands {
 			println(str)
 		}
-		return
-	}
-	index, ok := commandsMap[command]
-	if !ok {
-		println("不支持的命令")
 		return
 	}
 	
@@ -78,6 +82,16 @@ func main() {
 		return
 	}
 	
-	handler := handlers[index]
-	handler(num)
+	if command == "all" {
+		testAll(num)
+	} else {
+		index, ok := commandsMap[command]
+		if !ok {
+			println("不支持的命令")
+			return
+		}
+		handler := handlers[index]
+		handler(num)
+	}
+	
 }
