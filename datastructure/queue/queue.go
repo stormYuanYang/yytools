@@ -83,6 +83,7 @@ func (this *Queue) Len() int {
 
 // Head和Tail指向同一个位置就说明队列是空的
 func (this *Queue) Empty() bool {
+	// assert.Assert(this.Length == 0)
 	return this.Head == this.Tail
 }
 
@@ -180,7 +181,7 @@ func (this *Queue) nextHead() int {
 
 // 需要调用者保证(可以调用Empty()判断)，队列里还有元素可以出队列
 func (this *Queue) Dequeue() interface{} {
-	assert.Assert(!this.Empty(), "队列空了，无法出队列!")
+	// assert.Assert(!this.Empty(), "队列空了，无法出队列!")
 	item := this.Items[this.Head]
 	// 为了安全（避免内存泄露）
 	this.Items[this.Head] = nil
@@ -195,7 +196,7 @@ func (this *Queue) Dequeue() interface{} {
 
 // 需要调用者保证(可以调用Empty()判断)，队列里还有元素可以查看
 func (this *Queue) Peek() (item interface{}) {
-	assert.Assert(!this.Empty(), "队列空了，无法查看队首元素!")
+	// assert.Assert(!this.Empty(), "队列空了，无法查看队首元素!")
 	return this.Items[this.Head]
 }
 

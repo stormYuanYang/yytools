@@ -23,6 +23,7 @@ import (
 	"strconv"
 	"strings"
 	"yytools/common/assert"
+	"yytools/datastructure/queue"
 	"yytools/datastructure/sorted_set"
 	"yytools/datastructure/stack"
 )
@@ -30,11 +31,13 @@ import (
 var commandsMap = map[string]int{}
 
 var commands = []string{
+	"queue",
 	"sorted_set",
 	"stack",
 }
 
 var handlers = []func(int){
+	queue.QueueTest,
 	sorted_set.SortedSetTest,
 	stack.StackTest,
 }
