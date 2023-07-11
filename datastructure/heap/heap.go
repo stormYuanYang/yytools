@@ -24,8 +24,15 @@ import (
 
 // Item 堆元素
 type Item struct {
-	Data   interface{}
-	Weight int //权重值（决定堆元素的顺序）
+	Data   interface{} // 携带的数据
+	Weight int         // 权重值（决定堆元素的顺序）
+}
+
+type InterfaceHeap interface {
+	Length() int
+	PushItem(item *Item)
+	PopItem() *Item
+	PeekItem() *Item
 }
 
 /*
@@ -78,7 +85,13 @@ func (this *Heap) Pop() interface{} {
 
 /*
 	自定义的一些方法
+ 	不能直接使用Push和Pop(是为了实现go提供的堆的接口,不应直接调用)
+	使用者应该使用PushItem和PopItem替代
 */
+
+func (this *Heap) Length() int {
+	return this.Len()
+}
 
 func (this *Heap) PushItem(item *Item) {
 	assert.Assert(item != nil, "不能push空的元素到堆中")
@@ -87,4 +100,8 @@ func (this *Heap) PushItem(item *Item) {
 
 func (this *Heap) PopItem() *Item {
 	return heap.Pop(this).(*Item)
+}
+
+func (this *Heap) PeekItem() *Item {
+	return this.Items[0]
 }

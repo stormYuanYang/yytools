@@ -23,6 +23,7 @@ import (
 	"strconv"
 	"strings"
 	"yytools/common/assert"
+	"yytools/datastructure/heap"
 	"yytools/datastructure/queue"
 	"yytools/datastructure/sorted_set"
 	"yytools/datastructure/stack"
@@ -31,12 +32,14 @@ import (
 var commandsMap = map[string]int{}
 
 var commands = []string{
+	"heap",
 	"queue",
 	"sorted_set",
 	"stack",
 }
 
 var handlers = []func(int){
+	heap.HeapTest,
 	queue.QueueTest,
 	sorted_set.SortedSetTest,
 	stack.StackTest,
@@ -54,7 +57,7 @@ func testAll(num int) {
 		handler := handlers[i]
 		handler(num)
 	}
-	println("所有测试完毕...")
+	println("\n所有测试完毕...")
 }
 
 func main() {
@@ -67,7 +70,7 @@ func main() {
 	}
 	command := strings.ToLower(args[0])
 	if command == "help" {
-		println("使用参考：yytools sorted_set 5\n表示执行5轮sorted_set相关测试代码\n yytoools all 5\n表示对所有测试进行5轮测试\n")
+		println("使用参考：yytools sorted_set 5\n表示执行5轮sorted_set相关测试代码\n yytools all 5\n表示对所有测试进行5轮测试\n")
 		println("已支持的测试:")
 		println("all")
 		for _, str := range commands {
