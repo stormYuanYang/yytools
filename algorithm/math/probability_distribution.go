@@ -239,13 +239,3 @@ func (this *VoseAliasMethod) Generate() int {
 		return index
 	}
 }
-
-// 精简表查询(Condensed Table Lookup)
-// 这个方法不如Vose's Alias Method方法通用，十分依赖输入的数据分布
-// 但在适用时，其效率和空间利用率比Vose's Alias Method更好
-// 在必要时可以结合两者，实现更高效、节省的算法
-// 初始化阶段:时间复杂度O(n),空间复杂度O(1)
-// 生成阶段：时间复杂度O(1)
-// TODO
-type CondensedTableLookUp struct {
-}
