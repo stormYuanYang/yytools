@@ -143,7 +143,7 @@ func binarySearchInRange(tmpList []int32, n int32) int32 {
 	return -1
 }
 
-type InterfaceProbDistr interface {
+type InterfaceProbabilityDistribution interface {
 	Generate() int
 }
 

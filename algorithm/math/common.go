@@ -22,7 +22,7 @@ import (
 )
 
 /*
- GcdI-->greatest common divisor recursion
+ GcdR-->greatest common divisor recursion
  求最大公约数(欧几里得算法)递归实现
  计算两个非负整数x和y的最大公约数:若y是0,则最大公约数为x;
  否则,将x除以y得到余数r,x和y的最大公约数即为y和r的最大公约数.
