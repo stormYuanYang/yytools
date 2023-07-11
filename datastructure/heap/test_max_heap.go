@@ -14,7 +14,7 @@
 // limitations under the License.
 
 // 作者:  yangyuan
-// 创建日期:2023/7/10
+// 创建日期:2023/7/11
 package heap
 
 import (
@@ -24,103 +24,103 @@ import (
 	"yytools/common/assert"
 )
 
-// 用单调递增的变量来表示元素的顺序
-var uniq = 1
-var min = uniq
+// 用单调递减的变量来表示元素的顺序
+var muniq = 1000000
+var mmax = muniq
 
-func HeapOp_PushItem(heap InterfaceHeap, num int) interface{} {
+func MaxHeapOp_PushItem(heap InterfaceHeap, num int) interface{} {
 	for i := 0; i < num; i++ {
 		one := &Item{
 			Data:   nil,
-			Weight: uniq,
+			Weight: muniq,
 		}
 		heap.PushItem(one)
-		uniq++
+		muniq--
 
 		assert.Assert(heap.Length() > 0)
 	}
 	return nil
 }
 
-func HeapOp_PopItem(heap InterfaceHeap, num int) interface{} {
+func MaxHeapOp_PopItem(heap InterfaceHeap, num int) interface{} {
 	res := make([]*Item, 0, num)
 	for i := 0; i < num; i++ {
 		if heap.Length() > 0 {
 			tmp := heap.PeekItem()
 
 			item := heap.PopItem()
-			assert.Assert(item.Weight == min)
+			assert.Assert(item.Weight == mmax)
 			assert.Assert(item == tmp)
 
-			min++
+			mmax--
 			res = append(res, item)
 		}
 	}
-	// 必须是从小到大的
+	// 必须是从大到小的
 	for i := 0; i < len(res)-1; i++ {
-		assert.Assert(res[i].Weight < res[i+1].Weight)
+		assert.Assert(res[i].Weight > res[i+1].Weight)
 	}
 	return res
 }
 
-func HeapOp_PeekItem(heap InterfaceHeap, num int) interface{} {
+func MaxHeapOp_PeekItem(heap InterfaceHeap, num int) interface{} {
 	for i := 0; i < num; i++ {
 		oldLength := heap.Length()
 		if oldLength > 0 {
 			item := heap.PeekItem()
-			assert.Assert(item.Weight == min)
+			assert.Assert(item.Weight == mmax)
 			assert.Assert(oldLength == heap.Length())
 		}
 	}
 	return nil
 }
 
-var Heap_handlers = []func(heap InterfaceHeap, num int) interface{}{
-	HeapOp_PushItem,
-	HeapOp_PopItem,
-	HeapOp_PeekItem,
+var MaxHeap_handlers = []func(heap InterfaceHeap, num int) interface{}{
+	MaxHeapOp_PushItem,
+	MaxHeapOp_PopItem,
+	MaxHeapOp_PeekItem,
 }
 
-func HeapMustBeLegal(heap InterfaceHeap, deleted []*Item) {
-	items := HeapOp_PopItem(heap, heap.Length()).([]*Item)
+func MaxHeapMustBeLegal(heap InterfaceHeap, deleted []*Item) {
+	items := MaxHeapOp_PopItem(heap, heap.Length()).([]*Item)
 	assert.Assert(heap.Length() == 0)
 	deleted = append(deleted, items...)
-	// 必须是从小到大的
+	// 必须是从大到小的
 	for i := 0; i < len(deleted)-1; i++ {
-		assert.Assert(deleted[i].Weight < deleted[i+1].Weight)
+		assert.Assert(deleted[i].Weight > deleted[i+1].Weight)
 	}
 }
 
-func HeapTest(num int) {
-	println("最小堆测试开始...")
+func MaxHeapTest(num int) {
+	println("最大堆测试开始...")
 	random.RandSeed(time.Now().UnixMilli())
 	// 起始规模
 	scale := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000, 10000, 100000, 1000000}
 	for i := 1; i <= num; i++ {
 		fmt.Printf("第%d轮测试开始\n", i)
 		for k, s := range scale {
-			var heap InterfaceHeap = NewHeap()
+			var heap InterfaceHeap = NewMaxHeap()
 			deleted := []*Item{}
 			// 需要重置数据起始值
-			uniq = 1
-			min = uniq
-			HeapOp_PushItem(heap, s)
+			muniq = 1000000
+			mmax = muniq
+			MaxHeapOp_PushItem(heap, s)
 
 			// 十万次
 			opCnt := 100000
-			handlerLength := len(Heap_handlers)
+			handlerLength := len(MaxHeap_handlers)
 			for j := 0; j < opCnt; j++ {
 				r := random.RandInt(0, handlerLength-1)
-				handler := Heap_handlers[r]
+				handler := MaxHeap_handlers[r]
 				res := handler(heap, 1)
 				if res != nil {
 					deleted = append(deleted, res.([]*Item)...)
 				}
 			}
-			HeapMustBeLegal(heap, deleted)
+			MaxHeapMustBeLegal(heap, deleted)
 			fmt.Printf("测试#%d. 起始长度:%d, 当前长度:%d\n", k, s, heap.Length())
 		}
 		fmt.Printf("第%d轮测试结束\n\n", i)
 	}
-	println("最小堆测试完毕...")
+	println("最大堆测试完毕...")
 }

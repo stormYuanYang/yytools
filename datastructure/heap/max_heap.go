@@ -17,6 +17,11 @@
 // 创建日期:2023/6/7
 package heap
 
+import (
+	"container/heap"
+	"yytools/common/assert"
+)
+
 /*
  最大堆
 */
@@ -24,7 +29,22 @@ type MaxHeap struct {
 	Heap
 }
 
+func NewMaxHeap() *MaxHeap {
+	return &MaxHeap{
+		Heap: *NewHeap(),
+	}
+}
+
 func (this *MaxHeap) Less(i, j int) bool {
 	// 这里的比较，决定了该堆是个最大堆
 	return this.Items[i].Weight > this.Items[j].Weight
+}
+
+func (this *MaxHeap) PushItem(item *Item) {
+	assert.Assert(item != nil, "不能push空的元素到堆中")
+	heap.Push(this, item)
+}
+
+func (this *MaxHeap) PopItem() *Item {
+	return heap.Pop(this).(*Item)
 }

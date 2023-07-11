@@ -33,6 +33,8 @@ var commandsMap = map[string]int{}
 
 var commands = []string{
 	"heap",
+	"max_heap",
+	"priority_queue",
 	"queue",
 	"sorted_set",
 	"stack",
@@ -40,6 +42,8 @@ var commands = []string{
 
 var handlers = []func(int){
 	heap.HeapTest,
+	heap.MaxHeapTest,
+	heap.PriorityQueueTest,
 	queue.QueueTest,
 	sorted_set.SortedSetTest,
 	stack.StackTest,

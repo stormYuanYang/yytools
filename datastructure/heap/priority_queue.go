@@ -22,9 +22,15 @@ package heap
 
 import (
 	"container/heap"
-	"fmt"
-	"yytools/common/assert"
 )
+
+type InterfacePriorityQueue interface {
+	PushItem(item *PriorityItem)
+	PopItem() *PriorityItem
+	PeekItem() *PriorityItem
+	UpdatePriority(item *PriorityItem, newPriority int)
+	Length() int
+}
 
 // PriorityItem 优先级队列元素
 type PriorityItem struct {
@@ -95,12 +101,13 @@ func (this *PriorityQueue) Pop() interface{} {
 */
 
 /*
-	自定义的一些方法
+	自定义的一些方法 使用者不应该用上面这些方法
+    使用下面这些方法(最好通过接口访问)
 */
 
 // push元素到优先级队列中
 func (this *PriorityQueue) PushItem(item *PriorityItem) {
-	assert.Assert(item != nil, "不能push空的元素到优先级队列中")
+	//assert.Assert(item != nil, "不能push空的元素到优先级队列中")
 	heap.Push(this, item)
 }
 
@@ -109,18 +116,18 @@ func (this *PriorityQueue) PopItem() *PriorityItem {
 	return heap.Pop(this).(*PriorityItem)
 }
 
+func (this *PriorityQueue) PeekItem() *PriorityItem {
+	return this.Items[0]
+}
+
 // 更新元素的优先级;重新调节堆内元素的顺序
 func (this *PriorityQueue) UpdatePriority(item *PriorityItem, newPriority int) {
-	assert.Assert(item != nil, "不能传入空元素")
-	assert.Assert(item.Index >= 0 && item.Index < this.Len(),
-		"out of range", "堆长度:", this.Len(), "传入元素的Index:", item.Index)
-	assert.Assert(this.Items[item.Index] == item,
-		"元素必须已经存在优先级队列中",
-		"在指定位置队列中的元素:", fmt.Sprint("%+v", this.Items),
-		"传入的元素：", fmt.Sprint("%+v", item))
-
 	// 设置新的优先级
 	item.Priority = newPriority
 	// 重新建立堆的顺序
 	heap.Fix(this, item.Index)
+}
+
+func (this *PriorityQueue) Length() int {
+	return this.Len()
 }
