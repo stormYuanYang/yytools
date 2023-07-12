@@ -92,6 +92,8 @@ func main() {
 		return
 	}
 	
+	assert.SetAssert(true)
+	
 	if command == "all" {
 		testAll(num)
 	} else {

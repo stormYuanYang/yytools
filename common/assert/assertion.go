@@ -21,13 +21,19 @@ import (
 	"fmt"
 )
 
+var IsAssertOpen = true
+
+func SetAssert(open bool) {
+	IsAssertOpen = open
+}
+
 // 断言
 // 当断言失败时，调用panic
 func Assert(condition bool, list ...interface{}) {
-	if !condition {
+	if IsAssertOpen && !condition {
 		switch len(list) {
 		case 0:
-			panic("asertion failed.")
+			panic("asertion failed")
 			return
 		default:
 			str := fmt.Sprint(list)
