@@ -79,11 +79,6 @@ func PriorityQueueOp_UpdatePriority(pq InterfacePriorityQueue, num int) interfac
 
 			item := q.Items[randomIndex]
 
-			assert.Assert(item != nil, "不能传入空元素")
-			assert.Assert(item.Index >= 0 && item.Index < q.Len(),
-				"out of range", "堆长度:", q.Len(), "传入元素的Index:", item.Index)
-			assert.Assert(q.Items[item.Index] == item,
-				"元素必须已经存在优先级队列中", "传入的元素优先级：", item.Priority)
 
 			pq.UpdatePriority(item, randomPriority)
 			assert.Assert(oldLen == pq.Length())

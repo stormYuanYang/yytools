@@ -94,7 +94,7 @@ func (this *Heap) Length() int {
 }
 
 func (this *Heap) PushItem(item *Item) {
-	assert.Assert(item != nil, "不能push空的元素到堆中")
+	assert.Assert(item != nil)
 	heap.Push(this, item)
 }
 

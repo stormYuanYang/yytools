@@ -41,7 +41,7 @@ func (this *MaxHeap) Less(i, j int) bool {
 }
 
 func (this *MaxHeap) PushItem(item *Item) {
-	assert.Assert(item != nil, "不能push空的元素到堆中")
+	assert.Assert(item != nil)
 	heap.Push(this, item)
 }
 

@@ -404,7 +404,7 @@ func (this *SkipList) GetRank(data *NodeData) int {
 }
 
 func (this *SkipList) GetNodeByRank(rank int) *Node {
-	assert.Assert(rank > 0, "rank must greater than 0,rank:", rank)
+	assert.Assert(rank > 0, "rank must >= 0,rank:", rank)
 	
 	traversed := 0
 	prev := this.Head

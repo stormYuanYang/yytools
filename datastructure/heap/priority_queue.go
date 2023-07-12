@@ -22,6 +22,7 @@ package heap
 
 import (
 	"container/heap"
+	"yytools/common/assert"
 )
 
 type InterfacePriorityQueue interface {
@@ -107,7 +108,7 @@ func (this *PriorityQueue) Pop() interface{} {
 
 // push元素到优先级队列中
 func (this *PriorityQueue) PushItem(item *PriorityItem) {
-	//assert.Assert(item != nil, "不能push空的元素到优先级队列中")
+	assert.Assert(item != nil)
 	heap.Push(this, item)
 }
 
@@ -122,6 +123,10 @@ func (this *PriorityQueue) PeekItem() *PriorityItem {
 
 // 更新元素的优先级;重新调节堆内元素的顺序
 func (this *PriorityQueue) UpdatePriority(item *PriorityItem, newPriority int) {
+	assert.Assert(item != nil)
+	assert.Assert(item.Index >= 0 && item.Index < this.Len(), "out of range :", item.Index)
+	assert.Assert(this.Items[item.Index] == item, "元素未在队列中,传入的优先级：", item.Priority)
+	
 	// 设置新的优先级
 	item.Priority = newPriority
 	// 重新建立堆的顺序

@@ -44,7 +44,7 @@ func NewQueue() *Queue {
 }
 
 func NewQueueWithSize(size int) *Queue {
-	assert.Assert(size >= 0, "size must greater than or equl to 0,size:", size)
+	assert.Assert(size >= 0, "size must >= 0,size:", size)
 	items := make([]interface{}, size)
 	return &Queue{
 		Items: items,
@@ -134,7 +134,7 @@ func (this *Queue) resize(newCapacity int) {
 	this.Head = 0
 	this.Tail = length
 	// 做一个断言
-	assert.Assert(!this.full(), "容量改变后，一定不会满:", newCapacity, length)
+	assert.Assert(!this.full(), "容量改变后，一定不会满:", newCapacity, ",", length)
 }
 
 func (this *Queue) tryExpand() {
@@ -170,7 +170,7 @@ func (this *Queue) tryShrink() {
 			newCapacity = DEFAULT_QUEUE_SIZE
 		}
 		// 队列中最大元素数量是capacity-1
-		assert.Assert(this.Len() < newCapacity, "缩容后必须要保证元素都能放得下!", this.Len(), newCapacity)
+		assert.Assert(this.Len() < newCapacity, "缩容后必须要保证元素都能放得下!", this.Len(), ",", newCapacity)
 		this.resize(newCapacity)
 	}
 }

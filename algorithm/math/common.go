@@ -30,8 +30,8 @@ import "yytools/common/assert"
  空间复杂度: O(1)
 */
 func GcdR(x, y int) int {
-	assert.Assert(x >= 0, "x must greater than or equal 0, x:", x)
-	assert.Assert(y >= 0, "y must greater than or equal 0, y:", y)
+	assert.Assert(x >= 0, "x must >= 0, x:", x)
+	assert.Assert(y >= 0, "y must >= 0, y:", y)
 	if y == 0 {
 		return x
 	}
@@ -49,8 +49,8 @@ func GcdR(x, y int) int {
  空间复杂度: O(1)
 */
 func GcdI(x, y int) int {
-	assert.Assert(x >= 0, "x must greater than or equal 0, x:", x)
-	assert.Assert(y >= 0, "y must greater than or equal 0, y:", y)
+	assert.Assert(x >= 0, "x must >= 0, x:", x)
+	assert.Assert(y >= 0, "y must >= 0, y:", y)
 	for {
 		if y == 0 {
 			return x
