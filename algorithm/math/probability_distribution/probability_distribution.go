@@ -114,7 +114,7 @@ type IProbabilityDistribution interface {
 }
 
 /*
-	普通实现(利用二分搜索对查找进行优化)
+	普通实现 离散分布(利用二分搜索对查找进行优化)
  	构建时间复杂度:O(n),空间复杂度O(n)
 	生成时间复杂度:O(logn)
 	比起vose's alias method效率要低一些（但实现要简单很多，也更容易理解）
