@@ -45,7 +45,7 @@ func MathCommonTest(num int) {
 	for i := 1; i <= num; i++ {
 		fmt.Printf("第%d轮测试开始\n", i)
 		handlerLength := len(MathCommon_handlers)
-		for k := 0; i < handlerLength; k++ {
+		for k := 0; k < handlerLength; k++ {
 			// 十万次
 			for j := 0; j < 100000; j++ {
 				handler := MathCommon_handlers[k]
