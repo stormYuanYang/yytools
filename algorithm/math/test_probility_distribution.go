@@ -25,7 +25,7 @@ import (
 
 func NormalMethodTest(x []int) {
 	println("普通概率生成方法:")
-	
+	// 一百万次
 	N := 1000000
 	var method IProbabilityDistribution = NewNormalMethod(x)
 	tmp := make(map[int]int)
@@ -33,7 +33,6 @@ func NormalMethodTest(x []int) {
 		index := method.Generate()
 		tmp[index]++
 	}
-	println("实际输出概率分布：")
 	for i, _ := range x {
 		fmt.Printf("%.3f\t", float64(tmp[i])/float64(N))
 	}
@@ -42,6 +41,7 @@ func NormalMethodTest(x []int) {
 
 func VoseAliasMethodTest(x []int) {
 	println("vose的别名方法:")
+	// 一百万次
 	N := 1000000
 	var method IProbabilityDistribution = NewVoseAliasMethod(x)
 	tmp := make(map[int]int)
@@ -49,7 +49,6 @@ func VoseAliasMethodTest(x []int) {
 		index := method.Generate()
 		tmp[index]++
 	}
-	println("实际输出概率分布：")
 	for i, _ := range x {
 		fmt.Printf("%.3f\t", float64(tmp[i])/float64(N))
 	}
@@ -68,7 +67,7 @@ func ProbabilityDistributionTest(num int) {
 		fmt.Printf("第%d轮测试开始\n", i)
 		handlerLength := len(ProbabilityDistribution_handlers)
 		var x []int
-		count := 5
+		count := 10
 		for a := 0; a < count; a++ {
 			r := random.RandInt(1, 100)
 			x = append(x, r)
