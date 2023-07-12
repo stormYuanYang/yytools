@@ -20,7 +20,7 @@ package sorted_set
 import (
 	"fmt"
 	"time"
-	"yytools/algorithm/math"
+	"yytools/algorithm/math/probability_distribution"
 	random2 "yytools/algorithm/math/random"
 	"yytools/common/assert"
 	"yytools/common/constant"
@@ -266,17 +266,6 @@ func SortedSetOp_DeleteRangeByRank(ss *SortedSet, num int) {
 	}
 }
 
-const (
-	SORTEDSETOP_INSERT             = 0
-	SORTEDSETOP_DELETE             = 1
-	SORTEDSETOP_UPDATESCORE        = 2
-	SORTEDSETOP_GETRANGEBYSCORE    = 3
-	SORTEDSETOP_DELETERANGEBYSCORE = 4
-	SORTEDSETOP_GETRANK            = 5
-	SORTEDSETOP_GETRANGEBYRANK     = 6
-	SORTEDSETOP_DELETERANGEBYRANK  = 7
-)
-
 var SortedSetOp_Handlers = []func(ss *SortedSet, num int){
 	SortedSetOp_Insert,
 	SortedSetOp_Delete,
@@ -311,7 +300,7 @@ func SortedSetTest(total int) {
 			
 			realCnt := []int{0, 0}
 			// 根据操作次数得到对应的执行概率
-			aliasMethod := math.NewVoseAliasMethod(opWeights)
+			aliasMethod := probability_distribution.ProbFactory(probability_distribution.VoseAlias, opWeights)
 			for i := 0; i < opCnt+rangeOpCnt; i++ {
 				index := aliasMethod.Generate()
 				if index == 0 {

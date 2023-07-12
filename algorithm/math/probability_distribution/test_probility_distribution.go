@@ -15,7 +15,7 @@
 
 // 作者:  yangyuan
 // 创建日期:2023/6/14
-package math
+package probability_distribution
 
 import (
 	"fmt"
@@ -27,7 +27,7 @@ func NormalMethodTest(x []int) {
 	println("普通概率生成方法:")
 	// 一百万次
 	N := 1000000
-	var method IProbabilityDistribution = NewNormalMethod(x)
+	method := ProbFactory(Normal, x)
 	tmp := make(map[int]int)
 	for i := 0; i < N; i++ {
 		index := method.Generate()
@@ -43,7 +43,7 @@ func VoseAliasMethodTest(x []int) {
 	println("vose的别名方法:")
 	// 一百万次
 	N := 1000000
-	var method IProbabilityDistribution = NewVoseAliasMethod(x)
+	method := ProbFactory(VoseAlias, x)
 	tmp := make(map[int]int)
 	for i := 0; i < N; i++ {
 		index := method.Generate()

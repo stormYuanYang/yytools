@@ -15,7 +15,7 @@
 
 // 作者:  yangyuan
 // 创建日期:2022/6/15
-package math
+package probability_distribution
 
 import (
 	"yytools/algorithm/math/random"
@@ -107,6 +107,8 @@ func binarySearchInRange(tmpList []int, n int) int {
 	return -1
 }
 
+// 概率分布生成接口
+// 返回权重数组对应权重的下标
 type IProbabilityDistribution interface {
 	Generate() int
 }
@@ -137,6 +139,7 @@ func NewNormalMethod(weights []int) *NormalMethod {
 }
 
 // 时间复杂度:O(logn)
+// 返回权重数组的下标
 func (this *NormalMethod) Generate() int {
 	// 考虑一种特殊情况：即数组中所有元素的权重都为0
 	// 此时可以认为就是等概率计算各个元素的概率
@@ -244,5 +247,27 @@ func (this *VoseAliasMethod) Generate() int {
 		index := this.Alias[i] // 别名数组保存的是下标
 		assert.Assert(index >= 0 && index < n, "out of range:", index)
 		return index
+	}
+}
+
+/*
+	工厂模式 可以更方便使用概率分布方法
+*/
+type MethodType int32
+
+const (
+	Normal    MethodType = iota // 0 普通方法
+	VoseAlias                   // 1 vose的别名方法
+)
+
+func ProbFactory(typ MethodType, weights []int) IProbabilityDistribution {
+	switch typ {
+	case Normal:
+		return NewNormalMethod(weights)
+	case VoseAlias:
+		return NewVoseAliasMethod(weights)
+	default:
+		assert.Assert(false, "未支持的类型:", typ)
+		return nil
 	}
 }

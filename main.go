@@ -23,6 +23,7 @@ import (
 	"strconv"
 	"strings"
 	"yytools/algorithm/math"
+	"yytools/algorithm/math/probability_distribution"
 	"yytools/common/assert"
 	"yytools/datastructure/heap"
 	"yytools/datastructure/queue"
@@ -47,7 +48,7 @@ var handlers = []func(int){
 	heap.HeapTest,
 	math.MathCommonTest,
 	heap.MaxHeapTest,
-	math.ProbabilityDistributionTest,
+	probability_distribution.ProbabilityDistributionTest,
 	heap.PriorityQueueTest,
 	queue.QueueTest,
 	sorted_set.SortedSetTest,
