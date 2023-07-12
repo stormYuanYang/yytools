@@ -22,6 +22,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"yytools/algorithm/math"
 	"yytools/common/assert"
 	"yytools/datastructure/heap"
 	"yytools/datastructure/queue"
@@ -33,6 +34,7 @@ var commandsMap = map[string]int{}
 
 var commands = []string{
 	"heap",
+	"math_common",
 	"max_heap",
 	"priority_queue",
 	"queue",
@@ -42,6 +44,7 @@ var commands = []string{
 
 var handlers = []func(int){
 	heap.HeapTest,
+	math.MathCommonTest,
 	heap.MaxHeapTest,
 	heap.PriorityQueueTest,
 	queue.QueueTest,

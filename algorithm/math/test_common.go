@@ -16,3 +16,43 @@
 // 作者:  yangyuan
 // 创建日期:2023/7/11
 package math
+
+import (
+	"fmt"
+	"time"
+	"yytools/algorithm/math/random"
+	"yytools/common/assert"
+)
+
+func GcdTest(num int) {
+	for i := 0; i < num; i++ {
+		x := random.RandInt(0, 10000)
+		y := random.RandInt(0, 10000)
+		d1 := GcdR(x, y)
+		d2 := GcdI(x, y)
+		d3 := Gcd(x, y)
+		assert.Assert(d1 == d2 && d1 == d3, "x:", x, " y:", y)
+	}
+}
+
+var MathCommon_handlers = []func(num int){
+	GcdTest,
+}
+
+func MathCommonTest(num int) {
+	println("math.common测试开始...")
+	random.RandSeed(time.Now().UnixMilli())
+	for i := 1; i <= num; i++ {
+		fmt.Printf("第%d轮测试开始\n", i)
+		handlerLength := len(MathCommon_handlers)
+		for k := 0; i < handlerLength; k++ {
+			// 十万次
+			for j := 0; j < 100000; j++ {
+				handler := MathCommon_handlers[k]
+				handler(1)
+			}
+		}
+		fmt.Printf("第%d轮测试结束\n\n", i)
+	}
+	println("math.common测试完毕...")
+}
