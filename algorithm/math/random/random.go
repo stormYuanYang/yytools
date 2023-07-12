@@ -29,8 +29,8 @@ func RandSeed(seed int64) {
 
 // 返回闭区间[low,high]中的某一个数
 func RandInt32(low, high int32) int32 {
-	//assert.Assert(low >= 0, "invalid low:", low)
-	//assert.Assert(high >= 0, "invalid high:", high)
+	assert.Assert(low >= 0, "invalid low:", low)
+	assert.Assert(high >= 0, "invalid high:", high)
 	if low == high {
 		return low
 	}
@@ -44,8 +44,8 @@ func RandInt32(low, high int32) int32 {
 
 // 返回闭区间[low,high]中的某一个数
 func RandInt64(low, high int64) int64 {
-	//assert.Assert(low >= 0, "invalid low:", low)
-	//assert.Assert(high >= 0, "invalid high:", high)
+	assert.Assert(low >= 0, "invalid low:", low)
+	assert.Assert(high >= 0, "invalid high:", high)
 	if low == high {
 		return low
 	}
@@ -59,8 +59,8 @@ func RandInt64(low, high int64) int64 {
 
 // 返回闭区间[low,high]中的某一个数
 func RandInt(low, high int) int {
-	//assert.Assert(low >= 0, "invalid low:", low)
-	//assert.Assert(high >= 0, "invalid high:", high)
+	assert.Assert(low >= 0, "invalid low:", low)
+	assert.Assert(high >= 0, "invalid high:", high)
 	if low == high {
 		return low
 	}
