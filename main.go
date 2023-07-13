@@ -35,13 +35,24 @@ var commandsMap = map[string]int{}
 
 var commands = []string{
 	"heap",
-	"math_common",
-	"max_heap",
-	"probability_distribution",
-	"priority_queue",
+	"mathcommon",
+	"maxheap",
+	"prob",
+	"pq",
 	"queue",
-	"sorted_set",
+	"sortedset",
 	"stack",
+}
+
+var notes = []string{
+	"最小堆",
+	"公共数学方法（比如gcd）",
+	"最大堆",
+	"概率分布",
+	"优先级队列",
+	"队列",
+	"有序集合",
+	"栈",
 }
 
 var handlers = []func(int){
@@ -57,6 +68,7 @@ var handlers = []func(int){
 
 func init() {
 	assert.Assert(len(commands) == len(handlers), "len of commands must equal to handlers")
+	assert.Assert(len(commands) == len(notes), "len of commands must equal to notes")
 	for i, str := range commands {
 		commandsMap[str] = i
 	}
@@ -81,10 +93,10 @@ func main() {
 	command := strings.ToLower(args[0])
 	if command == "help" {
 		println("使用参考：yytools sorted_set 5\n表示执行5轮sorted_set相关测试代码\n yytools all 5\n表示对所有测试进行5轮测试\n")
-		println("已支持的测试:")
-		println("all")
-		for _, str := range commands {
-			println(str)
+		println("已支持的命令:")
+		fmt.Printf("%-20s\t说明:执行所有命令\n", "all")
+		for i := 0; i < len(commands); i++ {
+			fmt.Printf("%-20s\t说明:%s\n", commands[i], notes[i])
 		}
 		return
 	}
