@@ -18,9 +18,9 @@
 package random
 
 import (
+	"github.com/stormYuanYang/yytools/common/assert"
 	"math"
 	"math/rand"
-	"yytools/common/assert"
 )
 
 func RandSeed(seed int64) {

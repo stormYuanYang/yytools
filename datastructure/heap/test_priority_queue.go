@@ -21,9 +21,9 @@ package heap
 
 import (
 	"fmt"
+	"github.com/stormYuanYang/yytools/algorithm/math/random"
+	"github.com/stormYuanYang/yytools/common/assert"
 	"time"
-	"yytools/algorithm/math/random"
-	"yytools/common/assert"
 )
 
 func PriorityQueueOp_PushItem(pq InterfacePriorityQueue, num int) interface{} {

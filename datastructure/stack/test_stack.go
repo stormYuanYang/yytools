@@ -19,9 +19,9 @@ package stack
 
 import (
 	"fmt"
+	"github.com/stormYuanYang/yytools/algorithm/math/random"
+	"github.com/stormYuanYang/yytools/common/assert"
 	"time"
-	"yytools/algorithm/math/random"
-	"yytools/common/assert"
 )
 
 var unqi = 0

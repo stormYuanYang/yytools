@@ -19,16 +19,16 @@ package main
 
 import (
 	"fmt"
+	"github.com/stormYuanYang/yytools/algorithm/math"
+	"github.com/stormYuanYang/yytools/algorithm/math/probability_distribution"
+	"github.com/stormYuanYang/yytools/common/assert"
+	"github.com/stormYuanYang/yytools/datastructure/heap"
+	"github.com/stormYuanYang/yytools/datastructure/queue"
+	"github.com/stormYuanYang/yytools/datastructure/sorted_set"
+	"github.com/stormYuanYang/yytools/datastructure/stack"
 	"os"
 	"strconv"
 	"strings"
-	"yytools/algorithm/math"
-	"yytools/algorithm/math/probability_distribution"
-	"yytools/common/assert"
-	"yytools/datastructure/heap"
-	"yytools/datastructure/queue"
-	"yytools/datastructure/sorted_set"
-	"yytools/datastructure/stack"
 )
 
 var commandsMap = map[string]int{}

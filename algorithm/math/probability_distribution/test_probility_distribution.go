@@ -19,8 +19,8 @@ package probability_distribution
 
 import (
 	"fmt"
+	"github.com/stormYuanYang/yytools/algorithm/math/random"
 	"time"
-	"yytools/algorithm/math/random"
 )
 
 func NormalMethodTest(x []int) {

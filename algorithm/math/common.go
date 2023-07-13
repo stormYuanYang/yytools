@@ -17,7 +17,7 @@
 // 创建日期:2022/12/7
 package math
 
-import "yytools/common/assert"
+import "github.com/stormYuanYang/yytools/common/assert"
 
 /*
  GcdR-->greatest common divisor recursion

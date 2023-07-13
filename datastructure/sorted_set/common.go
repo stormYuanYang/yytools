@@ -18,8 +18,8 @@
 package sorted_set
 
 import (
+	"github.com/stormYuanYang/yytools/common/assert"
 	"math/rand"
-	"yytools/common/assert"
 )
 
 func random() int32 {

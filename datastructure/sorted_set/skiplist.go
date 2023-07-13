@@ -20,8 +20,8 @@
 package sorted_set
 
 import (
+	"github.com/stormYuanYang/yytools/common/assert"
 	"math"
-	"yytools/common/assert"
 )
 
 type SkipList struct {

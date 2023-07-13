@@ -22,7 +22,7 @@ package heap
 
 import (
 	"container/heap"
-	"yytools/common/assert"
+	"github.com/stormYuanYang/yytools/common/assert"
 )
 
 type InterfacePriorityQueue interface {

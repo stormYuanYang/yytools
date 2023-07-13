@@ -19,9 +19,9 @@ package heap
 
 import (
 	"fmt"
+	"github.com/stormYuanYang/yytools/algorithm/math/random"
+	"github.com/stormYuanYang/yytools/common/assert"
 	"time"
-	"yytools/algorithm/math/random"
-	"yytools/common/assert"
 )
 
 // 用单调递减的变量来表示元素的顺序

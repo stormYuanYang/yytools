@@ -20,7 +20,7 @@
 package sorted_set
 
 import (
-	"yytools/common/assert"
+	"github.com/stormYuanYang/yytools/common/assert"
 )
 
 type SortedSet struct {
