@@ -33,50 +33,63 @@ import (
 
 var commandsMap = map[string]int{}
 
-var commands = []string{
-	"heap",
-	"mathcommon",
-	"maxheap",
-	"prob",
-	"pq",
-	"queue",
-	"sortedset",
-	"stack",
+type Command struct {
+	Key     string
+	Note    string
+	Handler func(int)
 }
 
-var notes = []string{
-	"最小堆",
-	"公共数学方法（比如gcd）",
-	"最大堆",
-	"概率分布",
-	"优先级队列",
-	"队列",
-	"有序集合",
-	"栈",
-}
-
-var handlers = []func(int){
-	heap.HeapTest,
-	math.MathCommonTest,
-	heap.MaxHeapTest,
-	probability_distribution.ProbabilityDistributionTest,
-	heap.PriorityQueueTest,
-	queue.QueueTest,
-	sorted_set.SortedSetTest,
-	stack.StackTest,
-}
-
+var commands []*Command
 func init() {
-	assert.Assert(len(commands) == len(handlers), "len of commands must equal to handlers")
-	assert.Assert(len(commands) == len(notes), "len of commands must equal to notes")
-	for i, str := range commands {
-		commandsMap[str] = i
+	commands = append(commands, &Command{
+		Key:     "heap",
+		Note:    "最小堆",
+		Handler: heap.HeapTest,
+	})
+	commands = append(commands, &Command{
+		Key:     "mathcommon",
+		Note:    "公共数学方法（比如gcd）",
+		Handler: math.MathCommonTest,
+	})
+	commands = append(commands, &Command{
+		Key:     "maxheap",
+		Note:    "最大堆",
+		Handler: heap.MaxHeapTest,
+	})
+	commands = append(commands, &Command{
+		Key:     "prob",
+		Note:    "概率分布",
+		Handler: probability_distribution.ProbabilityDistributionTest,
+	})
+	commands = append(commands, &Command{
+		Key:     "pq",
+		Note:    "优先级队列",
+		Handler: heap.PriorityQueueTest,
+	})
+	commands = append(commands, &Command{
+		Key:     "queue",
+		Note:    "队列",
+		Handler: queue.QueueTest,
+	})
+	commands = append(commands, &Command{
+		Key:     "sortedset",
+		Note:    "有序集合",
+		Handler: sorted_set.SortedSetTest,
+	})
+	commands = append(commands, &Command{
+		Key:     "stack",
+		Note:    "栈",
+		Handler: stack.StackTest,
+	})
+
+	for i, c := range commands {
+		commandsMap[c.Key] = i
 	}
 }
 
 func testAll(num int) {
-	for i := 0; i < len(handlers); i++ {
-		handler := handlers[i]
+	for i := 0; i < len(commands); i++ {
+		handler := commands[i].Handler
 		handler(num)
 	}
 	println("\n所有测试完毕...")
@@ -96,7 +109,7 @@ func main() {
 		println("已支持的命令:")
 		fmt.Printf("%-20s\t说明:执行所有命令\n", "all")
 		for i := 0; i < len(commands); i++ {
-			fmt.Printf("%-20s\t说明:%s\n", commands[i], notes[i])
+			fmt.Printf("%-20s\t说明:%s\n", commands[i].Key, commands[i].Note)
 		}
 		return
 	}
@@ -117,7 +130,7 @@ func main() {
 			println("不支持的命令")
 			return
 		}
-		handler := handlers[index]
+		handler := commands[index].Handler
 		handler(num)
 	}
 	
