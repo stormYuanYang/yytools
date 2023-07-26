@@ -100,11 +100,31 @@ func VoseAliasMethodTest(x []int) {
 	println()
 }
 
+func DynamicWeightsTest(x []int) {
+	println("动态计算权重:")
+	weights := make(map[interface{}]int, len(x))
+	for k, v := range x {
+		weights[k] = v
+	}
+	method := NewDynamicWeights(weights)
+	totalWeights := method.TtlWght
+	tmp := make(map[int]int)
+	for method.CanGenerate() {
+		index := method.Generate().(int)
+		tmp[index]++
+	}
+	for i, _ := range x {
+		fmt.Printf("%.3f\t", float64(tmp[i])/float64(totalWeights))
+	}
+	println()
+}
+
 var ProbabilityDistribution_handlers = []func(num []int){
 	CalcIndexWithWeightTest,
 	CalcKeyWithWeightTest,
 	NormalMethodTest,
 	VoseAliasMethodTest,
+	DynamicWeightsTest,
 }
 
 func ProbabilityDistributionTest(num int) {
