@@ -23,6 +23,51 @@ import (
 	"time"
 )
 
+func CalcIndexWithWeightTest(x []int) {
+	println("遍历概率生成方法:")
+	// 一百万次
+	N := 1000000
+	totalWeight := 0
+	for _, one := range x {
+		totalWeight += one
+	}
+	
+	tmp := make(map[int]int)
+	for i := 0; i < N; i++ {
+		index := CalcIndexByWeight(x, totalWeight)
+		tmp[index]++
+	}
+	for i, _ := range x {
+		fmt.Printf("%.3f\t", float64(tmp[i])/float64(N))
+	}
+	println()
+}
+
+func CalcKeyWithWeightTest(x []int) {
+	println("在map中遍历概率的生成方法:")
+	// 一百万次
+	N := 1000000
+	totalWeight := 0
+	for _, one := range x {
+		totalWeight += one
+	}
+	
+	xMap := make(map[interface{}]int, len(x))
+	for i, v := range x {
+		xMap[i] = v
+	}
+	
+	tmp := make(map[int]int)
+	for i := 0; i < N; i++ {
+		index := CalcKeyByWeight(xMap, totalWeight).(int)
+		tmp[index]++
+	}
+	for i, _ := range x {
+		fmt.Printf("%.3f\t", float64(tmp[i])/float64(N))
+	}
+	println()
+}
+
 func NormalMethodTest(x []int) {
 	println("普通概率生成方法:")
 	// 一百万次
@@ -56,6 +101,8 @@ func VoseAliasMethodTest(x []int) {
 }
 
 var ProbabilityDistribution_handlers = []func(num []int){
+	CalcIndexWithWeightTest,
+	CalcKeyWithWeightTest,
 	NormalMethodTest,
 	VoseAliasMethodTest,
 }

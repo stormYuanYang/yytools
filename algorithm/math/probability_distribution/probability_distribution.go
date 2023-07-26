@@ -29,24 +29,92 @@ import (
 
 // 遍历查找
 // 时间复杂度O(n)
-func calcIndexWithWeight(weightList []int, totalWeight int) int {
+func CalcIndexByWeight(weightList []int, totalWeight int) int {
 	assert.Assert(totalWeight > 0, "总权重需要大于0：", totalWeight)
+	traverse := 0
 	// 先根据总权重计算一个随机值，范围在[1,totalWeight]
-	randNum := random.RandInt(1, totalWeight)
+	r := random.RandInt(1, totalWeight)
 	for i, weight := range weightList {
-		// 最后一次循环后，newTotalWeight会等于0,此时必然有randNum > newTotalWeight
-		newTotalWeight := totalWeight - weight
-		if randNum > newTotalWeight {
+		// 最后一次循环后，traverse会等于totalWeight,此时必然有r <= totalWeight
+		traverse += weight
+		if r <= traverse {
 			// 命中区间
 			return i
-		} else {
-			// 未命中，则通过减去当前区间权重 得到新的总权重
-			totalWeight = newTotalWeight
 		}
 	}
 	// 直接断言 逻辑不应该执行到这里
-	assert.Assert(false, "未命中任何区间,randNum:", randNum, "totalWeight:", totalWeight)
+	assert.Assert(false, "未命中任何区间,r:", r, "totalWeight:", totalWeight)
 	return -1
+}
+
+// 遍历查找(在map中根据权重查找)
+// 时间复杂度O(n)
+func CalcKeyByWeight(weightMap map[interface{}]int, totalWeight int) interface{} {
+	assert.Assert(totalWeight > 0, "总权重需要大于0：", totalWeight)
+	traverse := 0
+	// 先根据总权重计算一个随机值，范围在[1,totalWeight]
+	r := random.RandInt(1, totalWeight)
+	for key, weight := range weightMap {
+		// 最后一次循环后，traverse会等于totalWeight,此时必然有r <= totalWeight
+		traverse += weight
+		if r <= traverse {
+			// 命中区间
+			return key
+		}
+	}
+	// 直接断言 逻辑不应该执行到这里
+	assert.Assert(false, "未命中任何区间,r:", r, "totalWeight:", totalWeight)
+	return nil
+}
+
+// 概率分布生成接口
+// 返回权重数组对应权重的下标
+type IProbabilityDistribution interface {
+	Generate() int
+}
+
+/*
+	普通实现 离散分布(利用二分搜索对查找进行优化)
+ 	构建时间复杂度:O(n),空间复杂度O(n)
+	生成时间复杂度:O(logn)
+	比起vose's alias method效率要低一些（但实现要简单很多，也更容易理解）
+*/
+type NormalMethod struct {
+	WeightsSum []int // 权重和数组
+}
+
+func NewNormalMethod(weights []int) *NormalMethod {
+	weightsSum := make([]int, 0, len(weights))
+	totalWeight := 0
+	for _, weight := range weights {
+		assert.Assert(weight >= 0, "元素的权重不能小于0:", weight)
+		// 计算权重
+		totalWeight += weight
+		weightsSum = append(weightsSum, totalWeight)
+	}
+	assert.Assert(len(weightsSum) > 0, "权重数组长度要大于0")
+	return &NormalMethod{
+		WeightsSum: weightsSum,
+	}
+}
+
+// 时间复杂度:O(logn)
+// 返回权重数组的下标
+func (this *NormalMethod) Generate() int {
+	// 考虑一种特殊情况：即数组中所有元素的权重都为0
+	// 此时可以认为就是等概率计算各个元素的概率
+	length := len(this.WeightsSum)
+	totalWeight := this.WeightsSum[length-1]
+	if totalWeight == 0 {
+		// 等概率随机数组下标
+		return random.RandInt(0, length-1)
+	}
+	// 接下来，总权重至少为1
+	// 利用二分搜索提高查找的效率(比起遍历，时间复杂度从O(n)改善到O(logn))
+	randNum := random.RandInt(1, totalWeight)
+	index := searchLeftBound(this.WeightsSum, randNum)
+	assert.Assert(index != -1)
+	return index
 }
 
 // 二分搜索
@@ -105,56 +173,6 @@ func binarySearchInRange(tmpList []int, n int) int {
 		}
 	}
 	return -1
-}
-
-// 概率分布生成接口
-// 返回权重数组对应权重的下标
-type IProbabilityDistribution interface {
-	Generate() int
-}
-
-/*
-	普通实现 离散分布(利用二分搜索对查找进行优化)
- 	构建时间复杂度:O(n),空间复杂度O(n)
-	生成时间复杂度:O(logn)
-	比起vose's alias method效率要低一些（但实现要简单很多，也更容易理解）
-*/
-type NormalMethod struct {
-	WeightsSum []int // 权重和数组
-}
-
-func NewNormalMethod(weights []int) *NormalMethod {
-	weightsSum := make([]int, 0, len(weights))
-	totalWeight := 0
-	for _, weight := range weights {
-		assert.Assert(weight >= 0, "元素的权重不能小于0:", weight)
-		// 计算权重
-		totalWeight += weight
-		weightsSum = append(weightsSum, totalWeight)
-	}
-	assert.Assert(len(weightsSum) > 0, "权重数组长度要大于0")
-	return &NormalMethod{
-		WeightsSum: weightsSum,
-	}
-}
-
-// 时间复杂度:O(logn)
-// 返回权重数组的下标
-func (this *NormalMethod) Generate() int {
-	// 考虑一种特殊情况：即数组中所有元素的权重都为0
-	// 此时可以认为就是等概率计算各个元素的概率
-	length := len(this.WeightsSum)
-	totalWeight := this.WeightsSum[length-1]
-	if totalWeight == 0 {
-		// 等概率随机数组下标
-		return random.RandInt(0, length-1)
-	}
-	// 接下来，总权重至少为1
-	// 利用二分搜索提高查找的效率(比起遍历，时间复杂度从O(n)改善到O(logn))
-	randNum := random.RandInt(1, totalWeight)
-	index := searchLeftBound(this.WeightsSum, randNum)
-	assert.Assert(index != -1)
-	return index
 }
 
 // Vose's Alias Method(Vose的别名方法)
