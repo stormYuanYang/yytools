@@ -15,7 +15,7 @@
 
 // 作者:  yangyuan
 // 创建日期:2023/6/7
-package constant
+package base
 
 const (
 	TEN          = 10   // 十

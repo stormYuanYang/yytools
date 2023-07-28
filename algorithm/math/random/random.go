@@ -19,8 +19,10 @@ package random
 
 import (
 	"github.com/stormYuanYang/yytools/common/assert"
+	"github.com/stormYuanYang/yytools/common/base"
 	"math"
 	"math/rand"
+	"reflect"
 )
 
 func RandSeed(seed int64) {
@@ -70,6 +72,25 @@ func RandInt(low, high int) int {
 	assert.Assert(!(low == 0 && high == math.MaxInt), "low等于0时，high不能为最大值")
 	n := high - low + 1
 	return rand.Intn(n) + low
+}
+
+// 泛型方法
+// 使用了反射（reflection）来获取 low 的整数值，并根据其类型进行相应的计算和转换。
+// 请注意，使用反射会带来一些性能开销，因此在需要高性能的场景中，可能需要考虑其他方式来处理范围随机数的生成。
+// 此外，记得使用 rand.Seed 来设置随机数种子，以确保每次运行程序时都会获得不同的随机结果。
+func RandInteger[T base.Integer](low, high T) T {
+	// 不能通过这样获取 v := reflect.Kind(low)
+	kind := reflect.ValueOf(low).Kind()
+	switch kind {
+	case reflect.Int32:
+		return T(RandInt32(int32(low), int32(high)))
+	case reflect.Int64:
+		return T(RandInt64(int64(low), int64(high)))
+	case reflect.Int:
+		return T(RandInt(int(low), int(high)))
+	default:
+		panic("Unsupported type")
+	}
 }
 
 func RandFloat32() float32 {

@@ -52,14 +52,14 @@ func CalcKeyWithWeightTest(x []int) {
 		totalWeight += one
 	}
 	
-	xMap := make(map[interface{}]int, len(x))
+	xMap := make(map[int]int, len(x))
 	for i, v := range x {
 		xMap[i] = v
 	}
 	
 	tmp := make(map[int]int)
 	for i := 0; i < N; i++ {
-		index := CalcKeyByWeight(xMap, totalWeight).(int)
+		index := CalcKeyByWeight(xMap, totalWeight)
 		tmp[index]++
 	}
 	for i, _ := range x {
@@ -68,10 +68,13 @@ func CalcKeyWithWeightTest(x []int) {
 	println()
 }
 
+
 func NormalMethodTest(x []int) {
+	// 创建一个包含map字段的数据对象
 	println("普通概率生成方法:")
 	// 一百万次
 	N := 1000000
+	
 	method := ProbFactory(Normal, x)
 	tmp := make(map[int]int)
 	for i := 0; i < N; i++ {

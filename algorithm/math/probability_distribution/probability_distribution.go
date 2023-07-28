@@ -20,6 +20,7 @@ package probability_distribution
 import (
 	"github.com/stormYuanYang/yytools/algorithm/math/random"
 	"github.com/stormYuanYang/yytools/common/assert"
+	. "github.com/stormYuanYang/yytools/common/base"
 	"github.com/stormYuanYang/yytools/datastructure/stack"
 )
 
@@ -30,11 +31,11 @@ import (
 
 // 遍历查找
 // 时间复杂度O(n)
-func CalcIndexByWeight(weightList []int, totalWeight int) int {
+func CalcIndexByWeight[T Integer](weightList []T, totalWeight T) int {
 	assert.Assert(totalWeight > 0, "总权重需要大于0：", totalWeight)
-	traverse := 0
+	traverse := T(0)
 	// 先根据总权重计算一个随机值，范围在[1,totalWeight]
-	r := random.RandInt(1, totalWeight)
+	r := random.RandInteger(1, totalWeight)
 	for i, weight := range weightList {
 		// 最后一次循环后，traverse会等于totalWeight,此时必然有r <= totalWeight
 		traverse += weight
@@ -50,11 +51,11 @@ func CalcIndexByWeight(weightList []int, totalWeight int) int {
 
 // 遍历查找(在map中根据权重查找)
 // 时间复杂度O(n)
-func CalcKeyByWeight(weightMap map[interface{}]int, totalWeight int) interface{} {
+func CalcKeyByWeight[K comparable, V Integer](weightMap map[K]V, totalWeight V) K {
 	assert.Assert(totalWeight > 0, "总权重需要大于0：", totalWeight)
-	traverse := 0
+	traverse := V(0)
 	// 先根据总权重计算一个随机值，范围在[1,totalWeight]
-	r := random.RandInt(1, totalWeight)
+	r := random.RandInteger(1, totalWeight)
 	for key, weight := range weightMap {
 		// 最后一次循环后，traverse会等于totalWeight,此时必然有r <= totalWeight
 		traverse += weight
@@ -65,7 +66,8 @@ func CalcKeyByWeight(weightMap map[interface{}]int, totalWeight int) interface{}
 	}
 	// 直接断言 逻辑不应该执行到这里
 	assert.Assert(false, "未命中任何区间,r:", r, "totalWeight:", totalWeight)
-	return nil
+	var k K
+	return k
 }
 
 // 概率分布生成接口
@@ -80,13 +82,14 @@ type IProbabilityDistribution interface {
 	生成时间复杂度:O(logn)
 	比起vose's alias method效率要低一些（但实现要简单很多，也更容易理解）
 */
-type NormalMethod struct {
-	WeightsSum []int // 权重和数组
+
+type NormalMethod[T Integer] struct {
+	WeightsSum []T // 权重和数组
 }
 
-func NewNormalMethod(weights []int) *NormalMethod {
-	weightsSum := make([]int, 0, len(weights))
-	totalWeight := 0
+func NewNormalMethod[T Integer](weights []T) *NormalMethod[T] {
+	weightsSum := make([]T, 0, len(weights))
+	var totalWeight T
 	for _, weight := range weights {
 		assert.Assert(weight >= 0, "元素的权重不能小于0:", weight)
 		// 计算权重
@@ -94,14 +97,14 @@ func NewNormalMethod(weights []int) *NormalMethod {
 		weightsSum = append(weightsSum, totalWeight)
 	}
 	assert.Assert(len(weightsSum) > 0, "权重数组长度要大于0")
-	return &NormalMethod{
+	return &NormalMethod[T]{
 		WeightsSum: weightsSum,
 	}
 }
 
 // 时间复杂度:O(logn)
 // 返回权重数组的下标
-func (this *NormalMethod) Generate() int {
+func (this *NormalMethod[T]) Generate() int {
 	// 考虑一种特殊情况：即数组中所有元素的权重都为0
 	// 此时可以认为就是等概率计算各个元素的概率
 	length := len(this.WeightsSum)
@@ -112,7 +115,7 @@ func (this *NormalMethod) Generate() int {
 	}
 	// 接下来，总权重至少为1
 	// 利用二分搜索提高查找的效率(比起遍历，时间复杂度从O(n)改善到O(logn))
-	randNum := random.RandInt(1, totalWeight)
+	randNum := random.RandInteger(1, totalWeight)
 	index := searchLeftBound(this.WeightsSum, randNum)
 	assert.Assert(index != -1)
 	return index
@@ -120,7 +123,7 @@ func (this *NormalMethod) Generate() int {
 
 // 二分搜索
 // 查找左边界(区别普通二分查找)
-func searchLeftBound(weightsSum []int, target int) int {
+func searchLeftBound[T Integer](weightsSum []T, target T) int {
 	left := 0
 	right := len(weightsSum) - 1
 	// 目标值在(weightsSum[i-1], weightsSum[i]] 就意味着命中
@@ -155,7 +158,7 @@ func searchLeftBound(weightsSum []int, target int) int {
 // (l[2], l[3]]
 // ...
 // (l[n-1], l[n]]
-func binarySearchInRange(tmpList []int, n int) int {
+func binarySearchInRange[T Integer](tmpList []T, n T) int {
 	length := len(tmpList)
 	if length == 0 {
 		return -1
@@ -190,8 +193,8 @@ type VoseAliasMethod struct {
 
 type float float64
 
-func NewVoseAliasMethod(weights []int) *VoseAliasMethod {
-	totalWeight := 0
+func NewVoseAliasMethod[T Integer](weights []T) *VoseAliasMethod {
+	totalWeight := T(0)
 	for _, w := range weights {
 		totalWeight += w
 	}

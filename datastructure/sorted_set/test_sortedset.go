@@ -22,7 +22,7 @@ import (
 	"github.com/stormYuanYang/yytools/algorithm/math/probability_distribution"
 	random2 "github.com/stormYuanYang/yytools/algorithm/math/random"
 	"github.com/stormYuanYang/yytools/common/assert"
-	"github.com/stormYuanYang/yytools/common/constant"
+	"github.com/stormYuanYang/yytools/common/base"
 	"time"
 )
 
@@ -284,7 +284,7 @@ func SortedSetTest(total int) {
 	println("有序集合测试开始...")
 	random2.RandSeed(time.Now().UnixMilli())
 	nums := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000,
-		constant.TEN_THOUSAND, constant.HUNDRED_THOUSAND, constant.MILLION}
+		base.TEN_THOUSAND, base.HUNDRED_THOUSAND, base.MILLION}
 	for a := 1; a <= total; a++ {
 		fmt.Printf("-------第%d轮测试开始-------\n", a)
 		for k, n := range nums {
@@ -293,7 +293,7 @@ func SortedSetTest(total int) {
 			SortedSetOp_Insert(ss, n)
 			
 			// 基本操作的测试次数
-			opCnt := random2.RandInt(constant.HUNDRED_THOUSAND, constant.HUNDRED_THOUSAND)
+			opCnt := random2.RandInt(base.HUNDRED_THOUSAND, base.HUNDRED_THOUSAND)
 			// range相关操作都很耗时，减少测试的量级
 			rangeOpCnt := random2.RandInt(10, 10)
 			opWeights := []int{opCnt, rangeOpCnt}
