@@ -26,38 +26,38 @@ import (
 
 var unqi = 0
 
-func Stack_Push(stack *Stack, num int) {
+func Stack_Push(stack *Stack[int], num int) {
 	for i := 0; i < num; i++ {
 		unqi++
 		stack.Push(unqi)
 	}
 }
 
-func Stack_Pop(stack *Stack, num int) {
+func Stack_Pop(stack *Stack[int], num int) {
 	for i := 0; i < num; i++ {
 		if !stack.Empty() {
 			top := stack.Top()
 			oldLen := stack.Length()
 			elem := stack.Pop()
-			assert.Assert(top == elem && elem != nil)
+			assert.Assert(top == elem && elem != 0)
 			assert.Assert(oldLen == stack.Length()+1)
 		}
 	}
 }
 
-func Stack_Top(stack *Stack, num int) {
+func Stack_Top(stack *Stack[int], num int) {
 	if stack.Empty() {
 		return
 	}
 	for i := 0; i < num; i++ {
 		oldLen := stack.Length()
 		top := stack.Top()
-		assert.Assert(top != nil)
+		assert.Assert(top != 0)
 		assert.Assert(oldLen == stack.Length())
 	}
 }
 
-func Stack_EmptyCheck(stack *Stack, num int) {
+func Stack_EmptyCheck(stack *Stack[int], num int) {
 	if stack.Empty() {
 		assert.Assert(len(stack.Items) == 0)
 	} else {
@@ -65,24 +65,24 @@ func Stack_EmptyCheck(stack *Stack, num int) {
 	}
 }
 
-func Stack_LengthCheck(stack *Stack, num int) {
+func Stack_LengthCheck(stack *Stack[int], num int) {
 	length := stack.Length()
 	assert.Assert(length == len(stack.Items))
 }
 
-func StackMustLegal(stack *Stack) {
+func StackMustLegal(stack *Stack[int]) {
 	Stack_EmptyCheck(stack, 1)
 	Stack_LengthCheck(stack, 1)
-
+	
 	for i := 0; i < len(stack.Items); i++ {
 		if i < len(stack.Items)-1 {
 			// 必须是按顺序的
-			assert.Assert(stack.Items[i].(int) < stack.Items[i+1].(int))
+			assert.Assert(stack.Items[i] < stack.Items[i+1])
 		}
 	}
 }
 
-var Stack_Handlers = []func(stack *Stack, num int){
+var Stack_Handlers = []func(stack *Stack[int], num int){
 	Stack_Push,
 	Stack_Pop,
 	Stack_Top,
@@ -96,7 +96,7 @@ func StackTest(num int) {
 	for i := 1; i <= num; i++ {
 		fmt.Printf("第%d轮测试开始\n", i)
 		for k, s := range scale {
-			stack := NewStack()
+			stack := NewStack[int]()
 			Stack_Push(stack, s)
 
 			// 十万次

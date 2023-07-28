@@ -23,29 +23,29 @@ import (
 	"github.com/stormYuanYang/yytools/common/assert"
 )
 
-type InterfaceStack interface {
-	Length() int           // 栈的长度
-	Empty() bool           // 判断栈是否为空
-	Push(item interface{}) // 入栈
-	Pop() interface{}      // 出栈
-	Top() interface{}      // 获取栈首元素(不出栈)
+type InterfaceStack[T any] interface {
+	Length() int // 栈的长度
+	Empty() bool // 判断栈是否为空
+	Push(item T) // 入栈
+	Pop() T      // 出栈
+	Top() T      // 获取栈首元素(不出栈)
 }
 
-type Stack struct {
-	Items []interface{}
+type Stack[T any] struct {
+	Items []T
 }
 
 // 默认栈大小
 const DEFAULT_STACK_SIZE = 16
 
-func NewStack() *Stack {
-	return NewStackWithSize(DEFAULT_STACK_SIZE)
+func NewStack[T any]() *Stack[T] {
+	return NewStackWithSize[T](DEFAULT_STACK_SIZE)
 }
 
-func NewStackWithSize(size int) *Stack {
+func NewStackWithSize[T any](size int) *Stack[T] {
 	assert.Assert(size >= 0, "size must greater than or equl to 0,size:", size)
-	items := make([]interface{}, 0, size)
-	return &Stack{
+	items := make([]T, 0, size)
+	return &Stack[T]{
 		Items: items,
 	}
 }
@@ -54,25 +54,25 @@ func NewStackWithSize(size int) *Stack {
 	实现相应的接口方法
 */
 
-func (this *Stack) Length() int {
+func (this *Stack[T]) Length() int {
 	return len(this.Items)
 }
 
-func (this *Stack) Empty() bool {
+func (this *Stack[T]) Empty() bool {
 	return this.Length() == 0
 }
 
-func (this *Stack) Push(item interface{}) {
+func (this *Stack[T]) Push(item T) {
 	this.Items = append(this.Items, item)
 }
 
-func (this *Stack) tryShrink() {
+func (this *Stack[T]) tryShrink() {
 	if len(this.Items) < cap(this.Items)/4 {
 		newCap := cap(this.Items) / 2
 		if newCap < DEFAULT_STACK_SIZE {
 			newCap = DEFAULT_STACK_SIZE
 		}
-		newItems := make([]interface{}, len(this.Items), newCap)
+		newItems := make([]T, len(this.Items), newCap)
 		n := copy(newItems, this.Items)
 		assert.Assert(n == len(this.Items), "缩容不能改变元素数量!", len(this.Items), n)
 		this.Items = newItems
@@ -80,11 +80,12 @@ func (this *Stack) tryShrink() {
 }
 
 // 需要调用者保证(可以调用Empty()判断)，栈里还有元素可以出栈
-func (this *Stack) Pop() interface{} {
+func (this *Stack[T]) Pop() T {
 	length := this.Length()
 	assert.Assert(length > 0, "栈空了，无法出栈!")
 	item := this.Items[length-1]
-	this.Items[length-1] = nil // 为了安全（避免内存泄露）
+	var defaultVal T
+	this.Items[length-1] = defaultVal // 为了安全（避免内存泄露）
 	// 切面赋值的效率如何？手动决定何时缩容呢？
 	// 效率很高相当于直接操作数组下标 但是其切片的容量是不会减小的
 	// 也就是说当pop足够多元素后,切片所对应的cap是不会减小的，就会浪费很多空间
@@ -96,7 +97,7 @@ func (this *Stack) Pop() interface{} {
 }
 
 // 需要调用者保证(可以调用Empty()判断)，栈里还有元素可以查看
-func (this *Stack) Top() (item interface{}) {
+func (this *Stack[T]) Top() (item T) {
 	length := this.Length()
 	assert.Assert(length > 0, "栈空了，无法出栈!")
 	return this.Items[length-1]

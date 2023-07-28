@@ -203,8 +203,8 @@ func NewVoseAliasMethod[T Integer](weights []T) *VoseAliasMethod {
 	prob := make([]float, n)
 	alias := make([]int, n)
 	
-	small := stack.NewStackWithSize(n / 2)
-	large := stack.NewStackWithSize(n / 2)
+	small := stack.NewStackWithSize[int](n / 2)
+	large := stack.NewStackWithSize[int](n / 2)
 	
 	// 初始化概率数组(每个原概率值都乘以n,等比例放大;总体的概率分布是不变的)
 	// 概率值等比例放大后，概率平均值为1，概率总和为n
@@ -221,9 +221,9 @@ func NewVoseAliasMethod[T Integer](weights []T) *VoseAliasMethod {
 	// 当小概率集合和大概率集合都不为空时，循环处理
 	// 直到有一个集合为空，则结束循环
 	for !small.Empty() && !large.Empty() {
-		l := small.Pop().(int) // 小概率的下标
-		g := large.Pop().(int) // 大概率的下标
-		alias[l] = g           // 别名数组记录另一部分概率的下标
+		l := small.Pop() // 小概率的下标
+		g := large.Pop() // 大概率的下标
+		alias[l] = g     // 别名数组记录另一部分概率的下标
 		// This is a more numerically stable option
 		// 比起 prob[g] - (1 - prob[l])数值更稳定
 		prob[g] = prob[g] + prob[l] - 1
@@ -236,16 +236,16 @@ func NewVoseAliasMethod[T Integer](weights []T) *VoseAliasMethod {
 	
 	// 判断大概率下标集合
 	for !large.Empty() {
-		g := large.Pop().(int) // 得到下标
-		prob[g] = 1            // 经过前面的处理，这里的概率肯定是1
-		alias[g] = -1          // 对应别名下标(该情况下，没有对应别名所以其下标设置为一个无效的-1)
+		g := large.Pop() // 得到下标
+		prob[g] = 1      // 经过前面的处理，这里的概率肯定是1
+		alias[g] = -1    // 对应别名下标(该情况下，没有对应别名所以其下标设置为一个无效的-1)
 	}
 	// 判断小概率下标集合
 	for !small.Empty() {
 		// 能进入这里是因为数值精度的不稳定(This is only possible due to numerical instability)
-		l := small.Pop().(int) // 得到下标
-		prob[l] = 1            // 经过前面的处理，这里的概率肯定是1
-		alias[l] = -1          // 对应别名下标(该情况下，没有对应别名所以其下标设置为一个无效的-1)
+		l := small.Pop() // 得到下标
+		prob[l] = 1      // 经过前面的处理，这里的概率肯定是1
+		alias[l] = -1    // 对应别名下标(该情况下，没有对应别名所以其下标设置为一个无效的-1)
 	}
 	// 至此，概率数组和别名数组都已构建完成
 	
