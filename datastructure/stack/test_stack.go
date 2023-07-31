@@ -19,7 +19,7 @@ package stack
 
 import (
 	"fmt"
-	"github.com/stormYuanYang/yytools/algorithm/math/random"
+	"github.com/stormYuanYang/yytools/algorithm/math_tools/random"
 	"github.com/stormYuanYang/yytools/common/assert"
 	"time"
 )

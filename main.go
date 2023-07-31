@@ -19,8 +19,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/stormYuanYang/yytools/algorithm/math"
-	"github.com/stormYuanYang/yytools/algorithm/math/probability_distribution"
+	"github.com/stormYuanYang/yytools/algorithm/math_tools"
+	"github.com/stormYuanYang/yytools/algorithm/math_tools/probability_distribution"
 	"github.com/stormYuanYang/yytools/common/assert"
 	"github.com/stormYuanYang/yytools/datastructure/heap"
 	"github.com/stormYuanYang/yytools/datastructure/queue"
@@ -49,7 +49,7 @@ func init() {
 	commands = append(commands, &Command{
 		Key:     "mathcommon",
 		Note:    "公共数学方法（比如gcd）",
-		Handler: math.MathCommonTest,
+		Handler: math_tools.MathCommonTest,
 	})
 	commands = append(commands, &Command{
 		Key:     "maxheap",

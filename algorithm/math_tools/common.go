@@ -1,4 +1,4 @@
-// Package math.
+// Package math_tools.
 
 // 版权所有(Copyright)[yangyuan]
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
 
 // 作者:  yangyuan
 // 创建日期:2022/12/7
-package math
+package math_tools
 
 import "github.com/stormYuanYang/yytools/common/assert"
 

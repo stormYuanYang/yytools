@@ -52,9 +52,9 @@ func TestRandInt32(t *testing.T) {
 		//	name: "测试3",
 		//	args: args{
 		//		low:  -1,
-		//		high: math.MaxInt32,
+		//		high: math_tools.MaxInt32,
 		//	},
-		//	want: math.MaxInt32,
+		//	want: math_tools.MaxInt32,
 		//},
 		{
 			name: "测试4",
