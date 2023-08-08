@@ -18,7 +18,7 @@
 package probability_distribution
 
 import (
-	"github.com/stormYuanYang/yytools/algorithm/math/random"
+	"github.com/stormYuanYang/yytools/algorithm/math_tools/random"
 	"github.com/stormYuanYang/yytools/common/assert"
 	. "github.com/stormYuanYang/yytools/common/base"
 	"github.com/stormYuanYang/yytools/datastructure/stack"

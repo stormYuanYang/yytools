@@ -1,4 +1,4 @@
-// Package math.
+// Package math_tools.
 
 // 版权所有(Copyright)[yangyuan]
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,11 +15,11 @@
 
 // 作者:  yangyuan
 // 创建日期:2023/7/11
-package math
+package math_tools
 
 import (
 	"fmt"
-	"github.com/stormYuanYang/yytools/algorithm/math/random"
+	"github.com/stormYuanYang/yytools/algorithm/math_tools/random"
 	"github.com/stormYuanYang/yytools/common/assert"
 	"time"
 )
@@ -40,7 +40,7 @@ var MathCommon_handlers = []func(num int){
 }
 
 func MathCommonTest(num int) {
-	println("math.common测试开始...")
+	println("math_tools.common测试开始...")
 	random.RandSeed(time.Now().UnixMilli())
 	for i := 1; i <= num; i++ {
 		fmt.Printf("第%d轮测试开始\n", i)
@@ -54,5 +54,5 @@ func MathCommonTest(num int) {
 		}
 		fmt.Printf("第%d轮测试结束\n\n", i)
 	}
-	println("math.common测试完毕...")
+	println("math_tools.common测试完毕...")
 }

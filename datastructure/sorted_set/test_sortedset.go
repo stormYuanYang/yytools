@@ -19,8 +19,8 @@ package sorted_set
 
 import (
 	"fmt"
-	"github.com/stormYuanYang/yytools/algorithm/math/probability_distribution"
-	random2 "github.com/stormYuanYang/yytools/algorithm/math/random"
+	"github.com/stormYuanYang/yytools/algorithm/math_tools/probability_distribution"
+	random2 "github.com/stormYuanYang/yytools/algorithm/math_tools/random"
 	"github.com/stormYuanYang/yytools/common/assert"
 	"github.com/stormYuanYang/yytools/common/base"
 	"time"
