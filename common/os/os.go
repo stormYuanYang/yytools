@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"os"
 	"time"
-	"yytools/common/constant"
 )
 
 // 检测路径是否存在
@@ -48,7 +47,7 @@ func BackupFile(file string) (error, bool) {
 	err, ok := IsFileNormalStat(file)
 	if ok {
 		now := time.Now()
-		for i := 1; i < constant.TEN_THOUSAND; i++ {
+		for i := 1; i < 10000; i++ {
 			newName := fmt.Sprintf("%v_%d%02d%02d%02d%02d%02d%04d",
 				file, now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), i)
 			if _, isExist := IsFileExist(newName); isExist {
