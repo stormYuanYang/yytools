@@ -23,7 +23,7 @@ import (
 	"github.com/stormYuanYang/yytools/common/assert"
 )
 
-type InterfaceStack[T any] interface {
+type IStack[T any] interface {
 	Length() int // 栈的长度
 	Empty() bool // 判断栈是否为空
 	Push(item T) // 入栈

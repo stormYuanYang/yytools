@@ -102,7 +102,7 @@ func QueueTest(num int) {
 	println("队列测试开始...")
 	random.RandSeed(time.Now().UnixMilli())
 	// 起始规模
-	scale := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000, 10000, 100000, 1000000}
+	scale := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000, 1e4, 1e5, 1e6}
 	for i := 1; i <= num; i++ {
 		fmt.Printf("第%d轮测试开始\n", i)
 		for k, s := range scale {

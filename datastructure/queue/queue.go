@@ -21,7 +21,7 @@ import (
 	"github.com/stormYuanYang/yytools/common/assert"
 )
 
-type InterfaceQueue interface {
+type IQueue interface {
 	Len() int                 // 队列的长度
 	Empty() bool              // 判断队列是否为空
 	Enqueue(item interface{}) // 入队列
