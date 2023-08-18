@@ -22,15 +22,15 @@ const (
 	ONE_HUNDRED  = 100  // 百
 	ONE_THOUSAND = 1000 // 千
 	
-	TEN_THOUSAND     = TEN * ONE_THOUSAND     // 万
-	HUNDRED_THOUSAND = TEN * TEN_THOUSAND     // 十万
-	MILLION          = TEN * HUNDRED_THOUSAND // 百万
-	TEN_MILLION      = TEN * MILLION          // 千万
-	HUNDRED_MILLION  = TEN * TEN_MILLION      // 亿
+	TEN_THOUSAND     = 1e4 // 万
+	HUNDRED_THOUSAND = 1e5 // 十万
+	MILLION          = 1e6 // 百万
+	TEN_MILLION      = 1e7 // 千万
+	HUNDRED_MILLION  = 1e8 // 亿
 	
 	// 接下来的单位可能就超过了int32的表示范围(最大的int32大约是二十一亿)
-	BILLION         = TEN * HUNDRED_MILLION // 十亿
-	TEN_BILLION     = TEN * BILLION         // 百亿
-	HUNDRED_BILLION = TEN * TEN_BILLION     // 千亿
-	TRILLION        = TEN * HUNDRED_BILLION // 万亿
+	BILLION         = 1e9  // 十亿
+	TEN_BILLION     = 1e10 // 百亿
+	HUNDRED_BILLION = 1e11 // 千亿
+	TRILLION        = 1e12 // 万亿
 )
