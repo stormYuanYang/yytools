@@ -19,7 +19,6 @@ package os
 
 import (
 	"fmt"
-	"github.com/stormYuanYang/yytools/common/base"
 	"os"
 	"time"
 )
@@ -48,7 +47,7 @@ func BackupFile(file string) (error, bool) {
 	err, ok := IsFileNormalStat(file)
 	if ok {
 		now := time.Now()
-		for i := 1; i < base.TEN_THOUSAND; i++ {
+		for i := 1; i < 1e4; i++ {
 			newName := fmt.Sprintf("%v_%d%02d%02d%02d%02d%02d%04d",
 				file, now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), i)
 			if _, isExist := IsFileExist(newName); isExist {
