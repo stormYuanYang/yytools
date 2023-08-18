@@ -28,7 +28,7 @@ import (
 var uniq = 1
 var min = uniq
 
-func QueueOp_Enqueue(queue *Queue, num int) {
+func QueueOp_Enqueue(queue *Queue[int], num int) {
 	for i := 0; i < num; i++ {
 		oldLength := queue.Len()
 		
@@ -40,7 +40,7 @@ func QueueOp_Enqueue(queue *Queue, num int) {
 	}
 }
 
-func QueueOp_Dequeue(queue *Queue, num int) {
+func QueueOp_Dequeue(queue *Queue[int], num int) {
 	for i := 0; i < num; i++ {
 		if !queue.Empty() {
 			assert.Assert(queue.Len() > 0)
@@ -48,7 +48,7 @@ func QueueOp_Dequeue(queue *Queue, num int) {
 			oldLength := queue.Len()
 			deleted := queue.Dequeue()
 			
-			assert.Assert(deleted != nil)
+			assert.Assert(deleted != 0)
 			assert.Assert(deleted == min)
 			assert.Assert(oldLength == queue.Len()+1)
 			
@@ -59,7 +59,7 @@ func QueueOp_Dequeue(queue *Queue, num int) {
 	}
 }
 
-func QueueOp_Peek(queue *Queue, num int) {
+func QueueOp_Peek(queue *Queue[int], num int) {
 	for i := 0; i < num; i++ {
 		if !queue.Empty() {
 			oldLength := queue.Len()
@@ -75,15 +75,15 @@ func QueueOp_Peek(queue *Queue, num int) {
 	}
 }
 
-var Queue_Handlers = []func(queue *Queue, num int){
+var Queue_Handlers = []func(queue *Queue[int], num int){
 	QueueOp_Enqueue,
 	QueueOp_Dequeue,
 	QueueOp_Peek,
 }
 
-func QueueMustBeLegal(queue *Queue) {
+func QueueMustBeLegal(queue *Queue[int]) {
 	items := make([]interface{}, 0, queue.Len())
-	queue.Range(func(item interface{}) {
+	queue.Range(func(item int) {
 		items = append(items, item)
 	})
 	
@@ -106,7 +106,7 @@ func QueueTest(num int) {
 	for i := 1; i <= num; i++ {
 		fmt.Printf("第%d轮测试开始\n", i)
 		for k, s := range scale {
-			queue := NewQueue()
+			queue := NewQueue[int]()
 			// 需要重置数据起始值
 			uniq = 1
 			min = uniq

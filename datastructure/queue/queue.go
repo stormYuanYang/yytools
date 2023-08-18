@@ -21,16 +21,16 @@ import (
 	"github.com/stormYuanYang/yytools/common/assert"
 )
 
-type IQueue interface {
+type IQueue[T any] interface {
 	Len() int                 // 队列的长度
 	Empty() bool              // 判断队列是否为空
-	Enqueue(item interface{}) // 入队列
-	Dequeue() interface{}     // 出队列
-	Peek() interface{}        // 获取队首元素(不出队列)
+	Enqueue(item T)           // 入队列
+	Dequeue() T               // 出队列
+	Peek() T                  // 获取队首元素(不出队列)
 }
 
-type Queue struct {
-	Items  []interface{} //队列容量(队列中元素的最大数量是len(Items)-1, 因为Tail始终指向下一个可以入队的位置)
+type Queue[T any] struct {
+	Items []T            //队列容量(队列中元素的最大数量是len(Items)-1, 因为Tail始终指向下一个可以入队的位置)
 	Length int           // 队列中的元素数量
 	Head   int           // Head等于Tail时表示队列为空
 	Tail   int           // Tail+1==Head时表示队列满了 Tail下标对应位置上的元素必须是空的,表示下一个可以入队的空位置(才能区分队列空和满)
@@ -39,14 +39,14 @@ type Queue struct {
 // 默认队列大小
 const DEFAULT_QUEUE_SIZE = 16
 
-func NewQueue() *Queue {
-	return NewQueueWithSize(DEFAULT_QUEUE_SIZE)
+func NewQueue[T any]() *Queue[T] {
+	return NewQueueWithSize[T](DEFAULT_QUEUE_SIZE)
 }
 
-func NewQueueWithSize(size int) *Queue {
+func NewQueueWithSize[T any](size int) *Queue[T] {
 	assert.Assert(size >= 0, "size must >= 0,size:", size)
-	items := make([]interface{}, size)
-	return &Queue{
+	items := make([]T, size)
+	return &Queue[T]{
 		Items: items,
 		Head:  0,
 		Tail:  0,
@@ -59,7 +59,7 @@ func NewQueueWithSize(size int) *Queue {
 
 // 可以用该方法得到的值和Len()得到的值做比较
 // 两者返回的值必须相等
-func (this *Queue) calcLen() int {
+func (this *Queue[T]) calcLen() int {
 	length := 0
 	// 队尾在队首的右边，说明队列没有环绕
 	// 直接相减即可
@@ -77,12 +77,12 @@ func (this *Queue) calcLen() int {
 	return length
 }
 
-func (this *Queue) Len() int {
+func (this *Queue[T]) Len() int {
 	return this.Length
 }
 
 // Head和Tail指向同一个位置就说明队列是空的
-func (this *Queue) Empty() bool {
+func (this *Queue[T]) Empty() bool {
 	// assert.Assert(this.Length == 0)
 	return this.Head == this.Tail
 }
@@ -91,19 +91,19 @@ func (this *Queue) Empty() bool {
 // 要考虑到元素环绕的情况
 // 1.当不环绕时，队首元素在0，而队尾元素在Capacity-1处;
 // 2.环绕时，队尾元素就在队首元素的左边第一个，满下标:Tail+1 == Head
-func (this *Queue) full() bool {
+func (this *Queue[T]) full() bool {
 	return this.nextTail() == this.Head
 }
 
-func (this *Queue) Capacity() int {
+func (this *Queue[T]) Capacity() int {
 	return len(this.Items)
 }
 
-func (this *Queue) nextTail() int {
+func (this *Queue[T]) nextTail() int {
 	return (this.Tail + 1) % this.Capacity()
 }
 
-func (this *Queue) copyTo(newItems []interface{}) {
+func (this *Queue[T]) copyTo(newItems []T) {
 	// 依次将原数组中的元素，移动到新数组
 	if this.Tail >= this.Head {
 		// 没有环绕直接拷贝即可
@@ -119,9 +119,9 @@ func (this *Queue) copyTo(newItems []interface{}) {
 	}
 }
 
-func (this *Queue) resize(newCapacity int) {
+func (this *Queue[T]) resize(newCapacity int) {
 	// 新容量
-	newItems := make([]interface{}, newCapacity)
+	newItems := make([]T, newCapacity)
 	// 元素总数量
 	length := this.Len()
 	// 拷贝到新数组
@@ -137,7 +137,7 @@ func (this *Queue) resize(newCapacity int) {
 	assert.Assert(!this.full(), "容量改变后，一定不会满:", newCapacity, ",", length)
 }
 
-func (this *Queue) tryExpand() {
+func (this *Queue[T]) tryExpand() {
 	// 如果队列已满，则需要先扩容
 	if this.full() {
 		// 扩容(翻倍)
@@ -146,7 +146,7 @@ func (this *Queue) tryExpand() {
 	}
 }
 
-func (this *Queue) Enqueue(item interface{}) {
+func (this *Queue[T]) Enqueue(item T) {
 	// 判断是否需要扩容
 	this.tryExpand()
 	// 设置新的队尾元素
@@ -157,7 +157,7 @@ func (this *Queue) Enqueue(item interface{}) {
 	this.Length++
 }
 
-func (this *Queue) tryShrink() {
+func (this *Queue[T]) tryShrink() {
 	// 1.出队列后的元素总数不到总容量的1/4时，才进行缩容处理
 	// 这样可以保证，缩容后的元素总数不到新容量的1/2
 	// 2.新容量要大于等于默认的队列大小，否则容易造成很小的队列（新入队元素又容易导致扩容）
@@ -175,16 +175,17 @@ func (this *Queue) tryShrink() {
 	}
 }
 
-func (this *Queue) nextHead() int {
+func (this *Queue[T]) nextHead() int {
 	return (this.Head + 1) % this.Capacity()
 }
 
 // 需要调用者保证(可以调用Empty()判断)，队列里还有元素可以出队列
-func (this *Queue) Dequeue() interface{} {
+func (this *Queue[T]) Dequeue() T {
 	// assert.Assert(!this.Empty(), "队列空了，无法出队列!")
 	item := this.Items[this.Head]
 	// 为了安全（避免内存泄露）
-	this.Items[this.Head] = nil
+	var defaultItem T
+	this.Items[this.Head] = defaultItem
 	// 更新队首位置
 	this.Head = this.nextHead()
 	// 元素数量减一
@@ -195,13 +196,13 @@ func (this *Queue) Dequeue() interface{} {
 }
 
 // 需要调用者保证(可以调用Empty()判断)，队列里还有元素可以查看
-func (this *Queue) Peek() (item interface{}) {
+func (this *Queue[T]) Peek() (item T) {
 	// assert.Assert(!this.Empty(), "队列空了，无法查看队首元素!")
 	return this.Items[this.Head]
 }
 
 // 从头遍历到尾
-func (this *Queue) Range(f func(interface{})) {
+func (this *Queue[T]) Range(f func(T)) {
 	if this.Empty() {
 		return
 	}
