@@ -72,7 +72,7 @@ func CalcKeyByWeight[K comparable, V Integer](weightMap map[K]V, totalWeight V) 
 
 // 概率分布生成接口
 // 返回权重数组对应权重的下标
-type IProbabilityDistribution interface {
+type IProbDist interface {
 	Generate() int
 }
 
@@ -282,7 +282,7 @@ const (
 	VoseAlias                   // 1 vose的别名方法
 )
 
-func ProbFactory(typ MethodType, weights []int) IProbabilityDistribution {
+func ProbFactory(typ MethodType, weights []int) IProbDist {
 	switch typ {
 	case Normal:
 		return NewNormalMethod(weights)
