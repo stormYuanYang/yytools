@@ -33,4 +33,12 @@ const (
 	TEN_BILLION     = 1e10 // 百亿
 	HUNDRED_BILLION = 1e11 // 千亿
 	TRILLION        = 1e12 // 万亿
+	TEN_TRILLION              = 1e13 // 十万亿
+	HUNDRED_TRILLION          = 1e14 // 百万亿
+	THOUSAND_TRILLION         = 1e15 // 千万亿
+	TEN_THOUSAND_TRILLION     = 1e16 // 亿亿
+	HUNDRED_THOUSAND_TRILLION = 1e17 // 十亿亿
+	
+	// 接下来的单位可能会超过int64表示的最大范围(19位数字:9223372036854775807)
+	MILLION_TRILLION = 1e18 // 百亿亿
 )
