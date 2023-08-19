@@ -17,7 +17,10 @@
 // 创建日期:2022/12/7
 package math_tools
 
-import "github.com/stormYuanYang/yytools/common/assert"
+import (
+	"github.com/stormYuanYang/yytools/common/assert"
+	"github.com/stormYuanYang/yytools/common/base"
+)
 
 /*
  GcdR-->greatest common divisor recursion
@@ -29,7 +32,7 @@ import "github.com/stormYuanYang/yytools/common/assert"
  时间复杂度: ? 直觉一般是常量到对数之间
  空间复杂度: O(1)
 */
-func GcdR(x, y int) int {
+func GcdR[T base.Integer](x, y T) T {
 	assert.Assert(x >= 0, "x must >= 0, x:", x)
 	assert.Assert(y >= 0, "y must >= 0, y:", y)
 	if y == 0 {
@@ -48,7 +51,7 @@ func GcdR(x, y int) int {
  时间复杂度: ? 直觉一般是常量到对数之间
  空间复杂度: O(1)
 */
-func GcdI(x, y int) int {
+func GcdI[T base.Integer](x, y T) T {
 	assert.Assert(x >= 0, "x must >= 0, x:", x)
 	assert.Assert(y >= 0, "y must >= 0, y:", y)
 	for {
@@ -61,7 +64,7 @@ func GcdI(x, y int) int {
 	}
 }
 
-func Gcd(x, y int) int {
+func Gcd[T base.Integer](x, y T) T {
 	// 遍历(GcdI)比递归(GcdR)效率更高
 	// 这里采用遍历实现的方式获得最大公约数
 	return GcdI(x, y)

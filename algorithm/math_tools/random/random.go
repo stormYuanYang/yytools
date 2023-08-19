@@ -89,7 +89,28 @@ func RandInteger[T base.Integer](low, high T) T {
 	case reflect.Int:
 		return T(RandInt(int(low), int(high)))
 	default:
-		panic("Unsupported type")
+		panic("unsupported type")
+	}
+}
+
+// 不使用泛型的实现方式
+// 和上面泛型的实现方式进行比较:
+// 1.第一种实现使用了泛型类型约束 [T base.Integer]，可以保证传入的参数 low 和 high 是整数类型。
+// 	这样可以避免在运行时进行类型断言或反射操作，减少了额外的开销。
+// 2.第一种实现使用了静态类型判断，根据 reflect.ValueOf(low).Kind() 的结果直接选择对应的函数。
+//	这样可以在编译时确定具体的类型分支，避免了动态类型检查和转换的开销。
+// 3.反射操作 reflect.ValueOf(low).Kind() 在运行时会带来一定的性能开销，包括类型转换和动态类型检查。
+// 综上所述，尽管第一种实现涉及一次反射操作，但由于使用了静态类型约束和静态类型判断，以及避免了类型断言和动态类型检查的开销，其效率更高。
+func RandInteger1(low, high interface{}) interface{} {
+	switch low := low.(type) {
+	case int32:
+		return RandInt32(low, high.(int32))
+	case int64:
+		return RandInt64(low, high.(int64))
+	case int:
+		return RandInt(low, high.(int))
+	default:
+		panic("unsupported type")
 	}
 }
 
