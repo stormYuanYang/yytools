@@ -82,7 +82,6 @@ type IProbDist interface {
 	生成时间复杂度:O(logn)
 	比起vose's alias method效率要低一些（但实现要简单很多，也更容易理解）
 */
-
 type NormalMethod[T Integer] struct {
 	WeightsSum []T // 权重和数组
 }
@@ -282,14 +281,13 @@ const (
 	VoseAlias                   // 1 vose的别名方法
 )
 
-func ProbFactory(typ MethodType, weights []int) IProbDist {
+func ProbFactory[T Integer](typ MethodType, weights []T) IProbDist {
 	switch typ {
 	case Normal:
 		return NewNormalMethod(weights)
 	case VoseAlias:
 		return NewVoseAliasMethod(weights)
 	default:
-		assert.Assert(false, "未支持的类型:", typ)
-		return nil
+		panic("unsupported type")
 	}
 }

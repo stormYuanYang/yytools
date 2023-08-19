@@ -20,6 +20,7 @@ package probability_distribution
 import (
 	"github.com/stormYuanYang/yytools/algorithm/math_tools/random"
 	"github.com/stormYuanYang/yytools/common/assert"
+	"github.com/stormYuanYang/yytools/common/base"
 )
 
 /*
@@ -28,34 +29,34 @@ import (
 *   区别于 probability_distribution.go里的方法
  */
 
-type IDynamicProbDistr interface {
+type IDynamicProbDistr[T base.Integer] interface {
 	CanGenerate() bool
 	Generate() interface{}
-	SetReduce()
+	SetReduce(reduce T)
 }
 
 // 可以得到一个周期的完整分布
-type DynamicWeights struct {
-	Weights map[interface{}]int // 权重map
-	TtlWght int                 // 总权重
-	Reduce  int                 // 权重减少的值
+type DynamicWeights[T base.Integer] struct {
+	Weights map[interface{}]T // 权重map
+	TtlWght T                 // 总权重
+	Reduce  T                 // 权重减少的值
 }
 
 // 一般而言reduce为1,表示减去一个单位的权重
-func NewDynamicWeights(weights map[interface{}]int) *DynamicWeights {
-	return NewDynamicWeightsWithReduce(weights, 1)
+func NewDynamicWeights[T base.Integer](weights map[interface{}]T) *DynamicWeights[T] {
+	return NewDynamicWeightsWithReduce[T](weights, 1)
 }
 
-func NewDynamicWeightsWithReduce(weights map[interface{}]int, reduce int) *DynamicWeights {
+func NewDynamicWeightsWithReduce[T base.Integer](weights map[interface{}]T, reduce T) *DynamicWeights[T] {
 	assert.Assert(len(weights) > 0)
 	assert.Assert(reduce > 0)
-	total := 0
+	total := T(0)
 	for _, w := range weights {
 		total += w
 		assert.Assert(w > 0)
 	}
 	assert.Assert(total > 0, "总权重需要大于0：", total)
-	return &DynamicWeights{
+	return &DynamicWeights[T]{
 		Weights: weights,
 		TtlWght: total,
 		Reduce:  reduce,
@@ -63,7 +64,7 @@ func NewDynamicWeightsWithReduce(weights map[interface{}]int, reduce int) *Dynam
 }
 
 // 判断是否可以继续获得
-func (this *DynamicWeights) CanGenerate() bool {
+func (this *DynamicWeights[T]) CanGenerate() bool {
 	if this.TtlWght > 0 {
 		return true
 	} else {
@@ -71,18 +72,18 @@ func (this *DynamicWeights) CanGenerate() bool {
 	}
 }
 
-func (this *DynamicWeights) SetReduce(reduce int) {
+func (this *DynamicWeights[T]) SetReduce(reduce T) {
 	this.Reduce = reduce
 }
 
 // 遍历查找
 // 调用者去判断是否可以继续获得(CanGenerate判断)
 // 时间复杂度O(n)
-func (this *DynamicWeights) Generate() interface{} {
+func (this *DynamicWeights[T]) Generate() interface{} {
 	assert.Assert(this.TtlWght > 0, "总权重需要大于0：", this.TtlWght)
-	traverse := 0
+	traverse := T(0)
 	// 先根据总权重计算一个随机值，范围在[1,totalWeight]
-	r := random.RandInt(1, this.TtlWght)
+	r := random.RandInteger(1, this.TtlWght)
 	for key, weight := range this.Weights {
 		// 最后一次循环后，traverse会等于totalWeight,此时必然有r <= totalWeight
 		traverse += weight
