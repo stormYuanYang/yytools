@@ -21,6 +21,7 @@ package binary_search
 
 import (
 	"github.com/stormYuanYang/yytools/common/assert"
+	"github.com/stormYuanYang/yytools/common/base"
 )
 
 // 正确执行的条件: 数组是有序的(允许重复的元素出现)
@@ -28,7 +29,7 @@ import (
 
 // 经典实现一: 在有序数组里查找指定的元素
 // 可以用力扣题目验证方法的正确性: https://leetcode.cn/problems/binary-search/submissions/
-func BinarySearch(nums []int, target int) int {
+func BinarySearch[T base.Integer](nums []T, target T) int {
 	// 左右均为闭区间
 	left := 0
 	right := len(nums) - 1
@@ -62,7 +63,7 @@ func BinarySearch(nums []int, target int) int {
 }
 
 // 经典实现二(一): (当有重复元素时)查找其左边界
-func LeftBound(nums []int, target int) int {
+func LeftBound[T base.Integer](nums []T, target T) int {
 	left := 0
 	right := len(nums) - 1
 	for left <= right {
@@ -106,11 +107,11 @@ func LeftBound(nums []int, target int) int {
 }
 
 // 经典实现二(二): (当有重复元素时)查找其右边界
-func RightBound(nums []int, target int) int {
+func RightBound[T base.Integer](nums []T, target T) int {
 	return rightBound(nums, target, 0, len(nums)-1)
 }
 
-func rightBound(nums []int, target int, left int, right int) int {
+func rightBound[T base.Integer](nums []T, target T, left int, right int) int {
 	for left <= right {
 		mid := left + (right-left)/2
 		if target < nums[mid] {
@@ -152,7 +153,7 @@ func rightBound(nums []int, target int, left int, right int) int {
 
 // 查找元素的左右边界
 // 可以用力扣题目验证方法的正确性: https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/submissions/
-func SearchBound(nums []int, target int) (int, int) {
+func SearchBound[T base.Integer](nums []T, target T) (int, int) {
 	left := LeftBound(nums, target)
 	if left == -1 {
 		return -1, -1
@@ -165,7 +166,7 @@ func SearchBound(nums []int, target int) (int, int) {
 }
 
 // 优化
-func SearchBoundOpt(nums []int, target int) (int, int) {
+func SearchBoundOpt[T base.Integer](nums []T, target T) (int, int) {
 	left := LeftBound(nums, target)
 	if left == -1 {
 		return -1, -1
