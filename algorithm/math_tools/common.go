@@ -69,3 +69,31 @@ func Gcd[T base.Integer](x, y T) T {
 	// 这里采用遍历实现的方式获得最大公约数
 	return GcdI(x, y)
 }
+
+// 计算整数绝对值(abs)
+// 注意一种情况：当a是最小的整数时，-a仍然等于a
+func Abs[T base.Integer](a T) T {
+	if a < 0 {
+		return -a
+	} else {
+		return a
+	}
+}
+
+// 计算整数的较小值
+func Min[T base.Integer](a T, b T) T {
+	if a < b {
+		return a
+	} else {
+		return b
+	}
+}
+
+// 计算整数的较大值
+func Max[T base.Integer](a T, b T) T {
+	if a > b {
+		return a
+	} else {
+		return b
+	}
+}

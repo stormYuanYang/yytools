@@ -30,6 +30,15 @@ func RandSeed(seed int64) {
 }
 
 // 返回闭区间[low,high]中的某一个数
+func RandInt8(low, high int8) int8 {
+	return int8(RandInt32(int32(low), int32(high)))
+}
+
+func RandInt16(low, high int16) int16 {
+	return int16(RandInt32(int32(low), int32(high)))
+}
+
+// 返回闭区间[low,high]中的某一个数
 func RandInt32(low, high int32) int32 {
 	assert.Assert(low >= 0, "invalid low:", low)
 	assert.Assert(high >= 0, "invalid high:", high)
@@ -82,6 +91,10 @@ func RandInteger[T base.Integer](low, high T) T {
 	// 不能通过这样获取 v := reflect.Kind(low)
 	kind := reflect.ValueOf(low).Kind()
 	switch kind {
+	case reflect.Int8:
+		return T(RandInt8(int8(low), int8(high)))
+	case reflect.Int16:
+		return T(RandInt16(int16(low), int16(high)))
 	case reflect.Int32:
 		return T(RandInt32(int32(low), int32(high)))
 	case reflect.Int64:
@@ -103,6 +116,10 @@ func RandInteger[T base.Integer](low, high T) T {
 // 综上所述，尽管第一种实现涉及一次反射操作，但由于使用了静态类型约束和静态类型判断，以及避免了类型断言和动态类型检查的开销，其效率更高。
 func RandInteger1(low, high interface{}) interface{} {
 	switch low := low.(type) {
+	case int8:
+		return RandInt8(low, high.(int8))
+	case int16:
+		return RandInt16(low, high.(int16))
 	case int32:
 		return RandInt32(low, high.(int32))
 	case int64:
