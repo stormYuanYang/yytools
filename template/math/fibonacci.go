@@ -18,8 +18,8 @@
 package math
 
 import (
-    "github.com/stormYuanYang/yytools/common/assert"
-    "github.com/stormYuanYang/yytools/common/base"
+	"github.com/stormYuanYang/yytools/common/assert"
+	"github.com/stormYuanYang/yytools/common/base"
 )
 
 // 计算斐波那契数（并将斐波那契数列保存到备忘录中）
@@ -30,22 +30,22 @@ import (
 // Fibonacci(5, mem)
 // Fibonacci(10, mem)
 func Fibonacci[T base.Integer](n T, mem *[]T) T {
-    assert.Assert(n >= 1)
-    if len(*mem) == 0 {
-        // 初始化备忘录
-        mem = &[]T{0, 1}
-    }
-    // 如果已经计算过的斐波那契数就从备忘录中获取
-    if int(n-1) < len(*mem) {
-        return (*mem)[n-1]
-    }
-    
-    // 将新的斐波那契数放入备忘录中
-    for i := len(*mem); i <= int(n); i++ {
-        f2 := (*mem)[i-2]
-        f1 := (*mem)[i-1]
-        sum := f2 + f1
-        (*mem) = append((*mem), sum)
-    }
-    return (*mem)[n-1]
+	assert.Assert(n >= 1)
+	if len(*mem) == 0 {
+		// 初始化备忘录
+		mem = &[]T{0, 1}
+	}
+	// 如果已经计算过的斐波那契数就从备忘录中获取
+	if int(n-1) < len(*mem) {
+		return (*mem)[n-1]
+	}
+	
+	// 将新的斐波那契数放入备忘录中
+	for i := len(*mem); i <= int(n); i++ {
+		f2 := (*mem)[i-2]
+		f1 := (*mem)[i-1]
+		sum := f2 + f1
+		(*mem) = append((*mem), sum)
+	}
+	return (*mem)[n-1]
 }
