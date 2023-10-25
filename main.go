@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"github.com/stormYuanYang/yytools/algorithm/math_tools"
 	"github.com/stormYuanYang/yytools/algorithm/math_tools/probability_distribution"
+	"github.com/stormYuanYang/yytools/algorithm/sort"
 	"github.com/stormYuanYang/yytools/common/assert"
 	"github.com/stormYuanYang/yytools/datastructure/heap"
 	"github.com/stormYuanYang/yytools/datastructure/queue"
@@ -70,6 +71,11 @@ func init() {
 		Key:     "queue",
 		Note:    "队列",
 		Handler: queue.QueueTest,
+	})
+	commands = append(commands, &Command{
+		Key:     "sort",
+		Note:    "排序",
+		Handler: sort.SortTest,
 	})
 	commands = append(commands, &Command{
 		Key:     "sortedset",
