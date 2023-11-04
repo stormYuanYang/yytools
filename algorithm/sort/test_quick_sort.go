@@ -25,7 +25,7 @@ import (
 )
 
 func f(sortFunc func(arr []int32), cnt int, desc bool) {
-	arr := make([]int32, 1e5)
+	arr := make([]int32, 1e6)
 	totalDuration := int64(0)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {
@@ -52,7 +52,7 @@ func f(sortFunc func(arr []int32), cnt int, desc bool) {
 		// println()
 	}
 	if cnt > 1 {
-		fmt.Printf("平均耗时:%d\nms", totalDuration/int64(cnt))
+		fmt.Printf("平均耗时:%dms\n", totalDuration/int64(cnt))
 	}
 }
 
