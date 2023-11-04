@@ -21,24 +21,31 @@ import (
 	"fmt"
 	"github.com/stormYuanYang/yytools/algorithm/math_tools/random"
 	"github.com/stormYuanYang/yytools/common/assert"
+	"time"
 )
 
 func CountingSortTest(cnt int) {
 	fmt.Printf("计数排序测试开始..\n")
-	arr := make([]int32, 1e6)
+	arr := make([]int32, 1e5)
+	totalDuration := int64(0)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {
-			arr[i] = random.RandInt32(100, 999)
-			sign := random.RandInt32(1, 2)
-			if sign == 1 {
-				arr[i] = -arr[i]
-			}
+			arr[i] = random.RandInt32(1, 1e5)
+			// sign := random.RandInt32(1, 2)
+			// if sign == 1 {
+			// 	arr[i] = -arr[i]
+			// }
 		}
 		before := map[int32]int32{}
 		for _, v := range arr {
 			before[v]++
 		}
+		start := time.Now().UnixNano()
 		CountingSort(arr)
+		end := time.Now().UnixNano()
+		duration := (end - start) / 1e6
+		fmt.Printf("测试%d耗时:%dms\n", j+1, duration)
+		totalDuration += duration
 		after := map[int32]int32{}
 		for _, v := range arr {
 			after[v]++
@@ -56,6 +63,9 @@ func CountingSortTest(cnt int) {
 		//	fmt.Printf("%d\t", v)
 		//}
 		//println()
+	}
+	if cnt > 1 {
+		fmt.Printf("平均耗时:%d\nms", totalDuration/int64(cnt))
 	}
 	fmt.Printf("计数排序测试完毕..\n")
 }

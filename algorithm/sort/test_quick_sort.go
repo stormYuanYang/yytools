@@ -25,7 +25,8 @@ import (
 )
 
 func f(sortFunc func(arr []int32), cnt int, desc bool) {
-	arr := make([]int32, 1e6)
+	arr := make([]int32, 1e5)
+	totalDuration := int64(0)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {
 			arr[i] = random.RandInt32(1, 1e5)
@@ -33,7 +34,9 @@ func f(sortFunc func(arr []int32), cnt int, desc bool) {
 		start := time.Now().UnixNano()
 		sortFunc(arr)
 		end := time.Now().UnixNano()
-		fmt.Printf("测试%d耗时:%dms\n", j+1, (end-start)/1e6)
+		duration := (end - start) / 1e6
+		fmt.Printf("测试%d耗时:%dms\n", j+1, duration)
+		totalDuration += duration
 		for z := 1; z < len(arr); z++ {
 			if desc {
 				// 判断排序结束后是否降序
@@ -47,6 +50,9 @@ func f(sortFunc func(arr []int32), cnt int, desc bool) {
 		//	fmt.Printf("%d\t", v)
 		// }
 		// println()
+	}
+	if cnt > 1 {
+		fmt.Printf("平均耗时:%d\nms", totalDuration/int64(cnt))
 	}
 }
 

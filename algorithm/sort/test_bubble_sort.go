@@ -25,10 +25,10 @@ import (
 
 func BubbleSortTest(cnt int) {
 	fmt.Printf("冒泡排序测试开始..\n")
-	arr := make([]int32, 100)
+	arr := make([]int32, 1e3)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {
-			arr[i] = random.RandInt32(1, 99)
+			arr[i] = random.RandInt32(1, 1e3)
 		}
 		BubbleSort(arr)
 		for z := 1; z < len(arr); z++ {
@@ -45,10 +45,10 @@ func BubbleSortTest(cnt int) {
 
 func BubbleSortDescTest(cnt int) {
 	fmt.Printf("冒泡排序(降序)测试开始..\n")
-	arr := make([]int32, 100)
+	arr := make([]int32, 1e3)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {
-			arr[i] = random.RandInt32(1, 99)
+			arr[i] = random.RandInt32(1, 1e3)
 		}
 		BubbleSortDesc(arr)
 		for z := 1; z < len(arr); z++ {

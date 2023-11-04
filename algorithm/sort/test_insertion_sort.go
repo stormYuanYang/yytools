@@ -25,10 +25,10 @@ import (
 
 func InsertionSortTest(cnt int) {
 	fmt.Printf("插入排序测试开始..\n")
-	arr := make([]int32, 1000)
+	arr := make([]int32, 1e3)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {
-			arr[i] = random.RandInt32(1, 99)
+			arr[i] = random.RandInt32(1, 1e3)
 		}
 		InsertionSort(arr)
 		for z := 1; z < len(arr); z++ {
@@ -45,10 +45,10 @@ func InsertionSortTest(cnt int) {
 
 func InsertionSortDescTest(cnt int) {
 	fmt.Printf("插入排序(降序)测试开始..\n")
-	arr := make([]int32, 1000)
+	arr := make([]int32, 1e3)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {
-			arr[i] = random.RandInt32(1, 99)
+			arr[i] = random.RandInt32(1, 1e3)
 		}
 		InsertionSortDesc(arr)
 		for z := 1; z < len(arr); z++ {
