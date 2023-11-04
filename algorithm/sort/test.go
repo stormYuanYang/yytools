@@ -26,7 +26,9 @@ func SortTest(cnt int) {
 	InsertionSortDescTest(cnt)
 	// 快速排序
 	QuickSortTest(cnt)
+	QuickSortTraversalTest(cnt)
 	QuickSortDescTest(cnt)
+	QuickSortDescTraversalTest(cnt)
 	// 计数排序
 	CountingSortTest(cnt)
 	// 基数排序

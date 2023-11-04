@@ -27,6 +27,14 @@ func QuickSort[T base.Integer](arr []T) {
 	quickSort(arr, 0, len(arr))
 }
 
+func QuickSortTraversal[T base.Integer](arr []T) {
+	length := len(arr)
+	if length < 2 {
+		return
+	}
+	quickSortTraversal(arr, 0, length)
+}
+
 type StackData struct {
 	Start int
 	End   int
@@ -95,9 +103,17 @@ func QuickSortDesc[T base.Integer](arr []T) {
 	quickSortDesc(arr, 0, len(arr))
 }
 
+func QuickSortDescTraversal[T base.Integer](arr []T) {
+	length := len(arr)
+	if length < 2 {
+		return
+	}
+	quickSortDescTraversal(arr, 0, length)
+}
+
 // 利用栈的辅助,遍历实现快速排序
 // 避免函数的递归调用
-func quickSortTraversalDesc[T base.Integer](arr []T, start, end int) {
+func quickSortDescTraversal[T base.Integer](arr []T, start, end int) {
 	s := stack.NewStack[*StackData]()
 	s.Push(&StackData{Start: start, End: end})
 	for !s.Empty() {

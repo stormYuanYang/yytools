@@ -24,7 +24,7 @@ import (
 )
 
 func QuickSortTest(cnt int) {
-	arr := make([]int32, 10)
+	arr := make([]int32, 1e6)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {
 			arr[i] = random.RandInt32(1, 1e5)
@@ -42,8 +42,28 @@ func QuickSortTest(cnt int) {
 	fmt.Printf("快速排序测试完毕..\n")
 }
 
+func QuickSortTraversalTest(cnt int) {
+	arr := make([]int32, 1e6)
+	for j := 0; j < cnt; j++ {
+		for i := 0; i < len(arr); i++ {
+			arr[i] = random.RandInt32(1, 1e5)
+		}
+		QuickSortTraversal(arr)
+		for z := 1; z < len(arr); z++ {
+			// 判断排序结束后是否升序
+			assert.Assert(arr[z-1] <= arr[z])
+		}
+		// for _, v := range arr {
+		//	fmt.Printf("%d\t", v)
+		// }
+		// println()
+	}
+	fmt.Printf("快速排序(遍历)测试完毕..\n")
+}
+
+
 func QuickSortDescTest(cnt int) {
-	arr := make([]int32, 100)
+	arr := make([]int32, 1e6)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {
 			arr[i] = random.RandInt32(1, 1e5)
@@ -59,4 +79,23 @@ func QuickSortDescTest(cnt int) {
 		//println()
 	}
 	fmt.Printf("快速排序(降序)测试完毕..\n")
+}
+
+func QuickSortDescTraversalTest(cnt int) {
+	arr := make([]int32, 1e6)
+	for j := 0; j < cnt; j++ {
+		for i := 0; i < len(arr); i++ {
+			arr[i] = random.RandInt32(1, 1e5)
+		}
+		QuickSortDescTraversal(arr)
+		for z := 1; z < len(arr); z++ {
+			// 判断排序结束后是否降序序
+			assert.Assert(arr[z-1] >= arr[z])
+		}
+		// for _, v := range arr {
+		//	fmt.Printf("%d\t", v)
+		// }
+		// println()
+	}
+	fmt.Printf("快速排序(遍历)(降序)测试完毕..\n")
 }
