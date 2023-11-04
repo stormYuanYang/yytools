@@ -18,7 +18,7 @@
 package sort
 
 import (
-    "github.com/stormYuanYang/yytools/common/base"
+	"github.com/stormYuanYang/yytools/common/base"
 )
 
 // 计数排序 时间复杂度O(n+k)
@@ -30,35 +30,35 @@ import (
 // 2.有负数有正数的数组;
 // 3.正数的数组;
 func CountingSort[T base.Integer](array []T) {
-    if len(array) < 2 {
-        return
-    }
-    min := array[0]
-    max := array[0]
-    for i := 1; i < len(array); i++ {
-        if min > array[i] {
-            min = array[i]
-        } else if max < array[i] {
-            max = array[i]
-        }
-    }
-    if min == max {
-        // 数组中的数字都相等，无需再排序
-        return
-    }
-    
-    aux := make([]T, max-min+1)
-    for _, v := range array {
-        // 根据偏移量计算元素对应的数量
-        aux[v-min]++
-    }
-    
-    j := 0
-    for i := 0; i < len(aux); i++ {
-        for aux[i] > 0 {
-            array[j] = T(i) + min
-            aux[i]--
-            j++
-        }
-    }
+	if len(array) < 2 {
+		return
+	}
+	min := array[0]
+	max := array[0]
+	for i := 1; i < len(array); i++ {
+		if min > array[i] {
+			min = array[i]
+		} else if max < array[i] {
+			max = array[i]
+		}
+	}
+	if min == max {
+		// 数组中的数字都相等，无需再排序
+		return
+	}
+	
+	aux := make([]T, max-min+1)
+	for _, v := range array {
+		// 根据偏移量计算元素对应的数量
+		aux[v-min]++
+	}
+	
+	j := 0
+	for i := 0; i < len(aux); i++ {
+		for aux[i] > 0 {
+			array[j] = T(i) + min
+			aux[i]--
+			j++
+		}
+	}
 }

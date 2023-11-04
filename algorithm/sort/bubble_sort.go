@@ -20,49 +20,49 @@ package sort
 import "github.com/stormYuanYang/yytools/common/base"
 
 func BubbleSort[T base.Integer](arr []T) {
-    bubbleSort(arr, 0, len(arr))
+	bubbleSort(arr, 0, len(arr))
 }
 
 // 冒泡排序 默认按升序排列
 func bubbleSort[T base.Integer](arr []T, start, end int) {
-    for i := start + 1; i < end; i++ {
-        head := i - 1
-        min := arr[head]
-        minIndex := head
-        // 找到最小元素
-        for j := i; j < end; j++ {
-            if min > arr[j] {
-                min = arr[j]
-                minIndex = j
-            }
-        }
-        // 把最小的元素换到最前面
-        if minIndex != head {
-            arr[head], arr[minIndex] = arr[minIndex], arr[head]
-        }
-    }
+	for i := start + 1; i < end; i++ {
+		head := i - 1
+		min := arr[head]
+		minIndex := head
+		// 找到最小元素
+		for j := i; j < end; j++ {
+			if min > arr[j] {
+				min = arr[j]
+				minIndex = j
+			}
+		}
+		// 把最小的元素换到最前面
+		if minIndex != head {
+			arr[head], arr[minIndex] = arr[minIndex], arr[head]
+		}
+	}
 }
 
 func BubbleSortDesc[T base.Integer](arr []T) {
-    bubbleSortDesc(arr, 0, len(arr))
+	bubbleSortDesc(arr, 0, len(arr))
 }
 
 // 冒泡排序 默认按降序排序
 func bubbleSortDesc[T base.Integer](arr []T, start, end int) {
-    for i := start + 1; i < end; i++ {
-        head := i - 1
-        max := arr[head]
-        maxIndex := head
-        // 找到最大元素
-        for j := i; j < end; j++ {
-            if max < arr[j] {
-                max = arr[j]
-                maxIndex = j
-            }
-        }
-        // 把最大的元素换到最前面
-        if maxIndex != head {
-            arr[head], arr[maxIndex] = arr[maxIndex], arr[head]
-        }
-    }
+	for i := start + 1; i < end; i++ {
+		head := i - 1
+		max := arr[head]
+		maxIndex := head
+		// 找到最大元素
+		for j := i; j < end; j++ {
+			if max < arr[j] {
+				max = arr[j]
+				maxIndex = j
+			}
+		}
+		// 把最大的元素换到最前面
+		if maxIndex != head {
+			arr[head], arr[maxIndex] = arr[maxIndex], arr[head]
+		}
+	}
 }

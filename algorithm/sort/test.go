@@ -25,8 +25,10 @@ func SortTest(cnt int) {
 	InsertionSortTest(cnt)
 	InsertionSortDescTest(cnt)
 	// 快速排序
-	//QuickSortTest(cnt)
-	//QuickSortDescTest(cnt)
+	QuickSortTest(cnt)
+	QuickSortDescTest(cnt)
 	// 计数排序
 	CountingSortTest(cnt)
+	// 基数排序
+	// RadixSortTest(cnt)
 }
