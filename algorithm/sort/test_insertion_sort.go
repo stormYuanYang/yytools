@@ -24,6 +24,7 @@ import (
 )
 
 func InsertionSortTest(cnt int) {
+	fmt.Printf("插入排序测试开始..\n")
 	arr := make([]int32, 1000)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {
@@ -43,6 +44,7 @@ func InsertionSortTest(cnt int) {
 }
 
 func InsertionSortDescTest(cnt int) {
+	fmt.Printf("插入排序(降序)测试开始..\n")
 	arr := make([]int32, 1000)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {

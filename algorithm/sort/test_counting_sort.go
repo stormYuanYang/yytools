@@ -24,6 +24,7 @@ import (
 )
 
 func CountingSortTest(cnt int) {
+	fmt.Printf("计数排序测试开始..\n")
 	arr := make([]int32, 1e6)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {

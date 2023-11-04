@@ -24,6 +24,7 @@ import (
 )
 
 func BubbleSortTest(cnt int) {
+	fmt.Printf("冒泡排序测试开始..\n")
 	arr := make([]int32, 100)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {
@@ -43,6 +44,7 @@ func BubbleSortTest(cnt int) {
 }
 
 func BubbleSortDescTest(cnt int) {
+	fmt.Printf("冒泡排序(降序)测试开始..\n")
 	arr := make([]int32, 100)
 	for j := 0; j < cnt; j++ {
 		for i := 0; i < len(arr); i++ {
